@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npm run build
       - run: cp game/index.html dist/space-game.html
       - run: mkdir -p dist/game && cp game/index.html dist/game/index.html
