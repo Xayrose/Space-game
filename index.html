@@ -7,8 +7,8 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 :root{--bg:#05070b;--ink:#edf5ff;--muted:#8795a8;--line:#18303e;--cyan:#79ddff;--violet:#9a8cff}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;background:radial-gradient(circle at 50% 10%,#15466b22,transparent 35%),linear-gradient(transparent 97%,#ffffff06)}a{color:inherit;text-decoration:none}.wrap{width:min(1200px,calc(100% - 36px));margin:auto}#space{position:fixed;inset:0;z-index:-2}.grain{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .nav{position:fixed;z-index:20;top:16px;left:50%;transform:translateX(-50%);width:min(1200px,calc(100% - 24px));padding:9px 10px 9px 15px;border:1px solid #ffffff16;border-radius:16px;background:#05080dcc;backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:space-between}.brand{display:flex;gap:10px;align-items:center;font-weight:600}.mark{width:31px;height:31px;border:1px solid #79ddff66;border-radius:10px;display:grid;place-items:center}.mark:after{content:"";width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 22px var(--cyan)}.links{display:flex;gap:4px}.links a{font-size:12px;color:#8190a2;padding:8px 11px;border-radius:9px}.links a:hover{color:#fff;background:#ffffff08}.launch{padding:9px 13px;border-radius:10px;background:#eaf8ff;color:#061018;font-size:12px;font-weight:700}
-.hero{min-height:100svh;display:grid;align-items:center;padding:125px 0 80px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center}.eyebrow,.kicker{font:500 10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.18em;color:#7890a5}.eyebrow i{display:inline-block;width:28px;height:1px;background:var(--cyan);vertical-align:middle;margin-right:9px}h1{font-size:clamp(60px,9vw,124px);line-height:.86;letter-spacing:-.075em;margin:22px 0;font-weight:600}h1 span{display:block;color:#718096}.lead{max-width:590px;color:#a4b0c0;font-size:17px;line-height:1.65}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:28px}.btn{padding:13px 16px;border:1px solid #ffffff16;border-radius:12px;background:#ffffff07;font-size:13px;font-weight:600;transition:.25s}.btn:hover{transform:translateY(-2px);border-color:#79ddff55}.btn.primary{background:#eaf8ff;color:#061018;border-color:#eaf8ff}.meta{display:flex;gap:28px;margin-top:42px;font:9px "DM Mono";color:#607086;text-transform:uppercase;letter-spacing:.13em}.meta strong{display:block;color:#b6c4d2;margin-top:6px;font-weight:500}.art{height:560px;position:relative;display:grid;place-items:center}.orbit{position:absolute;width:min(39vw,470px);aspect-ratio:1;border:1px solid #79ddff1b;border-radius:50%;transform:rotateX(67deg) rotateZ(-15deg)}.orbit:before,.orbit:after{content:"";position:absolute;border:1px solid #79ddff0e;border-radius:50%}.orbit:before{inset:14%}.orbit:after{inset:30%}.readout{position:absolute;right:0;bottom:9%;width:190px;padding:13px;border:1px solid #ffffff15;background:#070c13b8;backdrop-filter:blur(14px)}.readout small{font:9px "DM Mono";color:#607086}.readout b{display:block;font-size:25px;margin:5px 0}.readout span{font:9px "DM Mono";color:var(--cyan)}
-section.block{padding:125px 0}.head{display:grid;grid-template-columns:.65fr 1.35fr;gap:30px;margin-bottom:48px}.head h2{font-size:clamp(40px,6vw,72px);line-height:.95;letter-spacing:-.06em;margin:0}.head p{color:#8795a8;line-height:1.7;max-width:570px}.feature-grid{display:grid;grid-template-columns:7fr 5fr;gap:12px}.card{min-height:250px;border:1px solid #ffffff12;border-radius:18px;padding:24px;background:linear-gradient(145deg,#0d1723bb,#060a10aa);position:relative;overflow:hidden;transition:.3s}.card:hover{transform:translateY(-5px);border-color:#79ddff44}.card:nth-child(3){grid-column:1/3;min-height:180px}.num{font:10px "DM Mono";color:#607086}.card h3{font-size:25px;margin:40px 0 8px}.card p{color:#7f8da0;line-height:1.55;max-width:560px}.card:after{content:"";position:absolute;right:-90px;bottom:-100px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#79ddff16,transparent 68%)}.manifest{display:grid;grid-template-columns:1.25fr .75fr;border-top:1px solid #ffffff12;border-bottom:1px solid #ffffff12}.manifest-main{padding:42px 40px 42px 0}.manifest-main p{font-size:clamp(26px,3.4vw,43px);line-height:1.1;letter-spacing:-.04em;margin:0}.stats{border-left:1px solid #ffffff12;padding:42px 0 42px 32px}.stat{padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid #ffffff0d}.stat:last-child{border:0;margin:0}.stat b{font-size:31px;font-weight:500}.stat span{display:block;color:#647388;font:9px "DM Mono";text-transform:uppercase;letter-spacing:.13em;margin-top:4px}.specs{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #ffffff12}.spec{display:grid;grid-template-columns:150px 1fr;padding:17px 0;border-bottom:1px solid #ffffff0b;font-size:13px}.spec:nth-child(odd){margin-right:26px}.spec:nth-child(even){margin-left:26px}.spec label{font:9px "DM Mono";color:#607086;text-transform:uppercase;letter-spacing:.12em}.spec div{color:#b2becb}.cta{display:grid;grid-template-columns:1.1fr .9fr;border:1px solid #79ddff30;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#0b1a28dd,#060a10cc)}.cta-copy{padding:48px}.cta h2{font-size:clamp(40px,6vw,68px);line-height:.95;letter-spacing:-.06em;margin:12px 0}.cta p{color:#8795a8;line-height:1.7;max-width:560px}.cta-art{min-height:320px;position:relative;background:radial-gradient(circle,#4bbcff12,transparent 45%)}.ring{position:absolute;inset:15%;border:1px solid #79ddff1b;border-radius:50%;animation:spin 18s linear infinite}.ring:nth-child(2){inset:28%;animation-direction:reverse;animation-duration:11s}.ring:nth-child(3){inset:40%;border-color:#9a8cff2c;animation-duration:7s}@keyframes spin{to{transform:rotate(360deg)}}.reveal{opacity:0;transform:translateY(24px);transition:.8s}.reveal.in{opacity:1;transform:none}footer{padding:45px 0 70px;border-top:1px solid #ffffff12;color:#607086;font:9px "DM Mono";letter-spacing:.1em}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hero{min-height:100svh;display:grid;align-items:center;padding:125px 0 80px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center}.eyebrow,.kicker{font:500 10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.18em;color:#7890a5}.eyebrow i{display:inline-block;width:28px;height:1px;background:var(--cyan);vertical-align:middle;margin-right:9px}h1{font-size:clamp(60px,9vw,124px);line-height:.86;letter-spacing:-.075em;margin:22px 0;font-weight:600}h1 span{display:block;color:#718096}.lead{max-width:590px;color:#a4b0c0;font-size:17px;line-height:1.65}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:28px}.btn{padding:13px 16px;border:1px solid #ffffff16;border-radius:12px;background:#ffffff07;font-size:13px;font-weight:600;transition:.25s}.btn:hover{transform:translateY(-2px);border-color:#79ddff55}.btn.primary{background:#eaf8ff;color:#061018;border-color:#eaf8ff}.meta{display:flex;gap:28px;margin-top:42px;font:9px "DM Mono";color:#607086;text-transform:uppercase;letter-spacing:.13em}.meta strong{display:block;color:#b6c4d2;margin-top:6px;font-weight:500}.art{height:560px;position:relative;display:grid;place-items:center;isolation:isolate}.art:before{content:"";position:absolute;width:330px;height:330px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8eeaff 0 2%,#2a7296 17%,#102d43 46%,#050a11 72%);box-shadow:0 0 90px #2588bb22,inset -38px -25px 55px #000b;transform:translateZ(0);z-index:-1}.art:after{content:"";position:absolute;width:470px;height:150px;border:1px solid #79ddff16;border-radius:50%;transform:rotate(-17deg);box-shadow:0 0 60px #79ddff08;z-index:-1}.orbit{position:absolute;width:min(39vw,470px);animation:orbitDrift 16s linear infinite}@keyframes orbitDrift{to{transform:rotateX(67deg) rotateZ(345deg)}}aspect-ratio:1;border:1px solid #79ddff1b;border-radius:50%;transform:rotateX(67deg) rotateZ(-15deg)}.orbit:before,.orbit:after{content:"";position:absolute;border:1px solid #79ddff0e;border-radius:50%}.orbit:before{inset:14%}.orbit:after{inset:30%}.readout{position:absolute;right:0;bottom:9%;width:190px;padding:13px;border:1px solid #ffffff15;background:#070c13b8;backdrop-filter:blur(14px)}.readout small{font:9px "DM Mono";color:#607086}.readout b{display:block;font-size:25px;margin:5px 0}.readout span{font:9px "DM Mono";color:var(--cyan)}
+section.block{padding:125px 0}.head{display:grid;grid-template-columns:.65fr 1.35fr;gap:30px;margin-bottom:48px}.head h2{font-size:clamp(40px,6vw,72px);line-height:.95;letter-spacing:-.06em;margin:0}.head p{color:#8795a8;line-height:1.7;max-width:570px}.feature-grid{display:grid;grid-template-columns:7fr 5fr;gap:12px}.card{min-height:250px;border:1px solid #ffffff12;border-radius:18px;padding:24px;background:linear-gradient(145deg,#0d1723bb,#060a10aa);position:relative;overflow:hidden;transition:.3s}.card:hover{transform:translateY(-5px);border-color:#79ddff44}.card:nth-child(3){grid-column:1/3;min-height:180px}.num{font:10px "DM Mono";color:#607086}.card h3{font-size:25px;margin:40px 0 8px}.card p{color:#7f8da0;line-height:1.55;max-width:560px}.card:after{content:"";position:absolute;right:-90px;bottom:-100px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#79ddff16,transparent 68%)}.manifest{display:grid;grid-template-columns:1.25fr .75fr;border-top:1px solid #ffffff12;border-bottom:1px solid #ffffff12}.manifest-main{padding:42px 40px 42px 0}.manifest-main p{font-size:clamp(26px,3.4vw,43px);line-height:1.1;letter-spacing:-.04em;margin:0}.stats{border-left:1px solid #ffffff12;padding:42px 0 42px 32px}.stat{padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid #ffffff0d}.stat:last-child{border:0;margin:0}.stat b{font-size:31px;font-weight:500}.stat span{display:block;color:#647388;font:9px "DM Mono";text-transform:uppercase;letter-spacing:.13em;margin-top:4px}.specs{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #ffffff12}.spec{display:grid;grid-template-columns:150px 1fr;padding:17px 0;border-bottom:1px solid #ffffff0b;font-size:13px}.spec:nth-child(odd){margin-right:26px}.spec:nth-child(even){margin-left:26px}.spec label{font:9px "DM Mono";color:#607086;text-transform:uppercase;letter-spacing:.12em}.spec div{color:#b2becb}.cta{display:grid;grid-template-columns:1.1fr .9fr;border:1px solid #79ddff30;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#0b1a28dd,#060a10cc)}.cta-copy{padding:48px}.cta h2{font-size:clamp(40px,6vw,68px);line-height:.95;letter-spacing:-.06em;margin:12px 0}.cta p{color:#8795a8;line-height:1.7;max-width:560px}.cta-art{min-height:320px;position:relative;background:radial-gradient(circle,#4bbcff12,transparent 45%)}.ring{position:absolute;inset:15%;border:1px solid #79ddff1b;border-radius:50%;animation:spin 18s linear infinite}.ring:nth-child(2){inset:28%;animation-direction:reverse;animation-duration:11s}.ring:nth-child(3){inset:40%;border-color:#9a8cff2c;animation-duration:7s}@keyframes spin{to{transform:rotate(360deg)}}.reveal{opacity:1;transform:none}.js-ready .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s ease}.js-ready .reveal.in{opacity:1;transform:none}footer{padding:45px 0 70px;border-top:1px solid #ffffff12;color:#607086;font:9px "DM Mono";letter-spacing:.1em}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 @media(max-width:850px){.links{display:none}.hero-grid,.manifest,.cta{grid-template-columns:1fr}.art{height:350px;order:-1}.orbit{width:300px}.readout{right:4%;bottom:0}.head{grid-template-columns:1fr}.feature-grid{grid-template-columns:1fr}.card,.card:nth-child(3){grid-column:auto;min-height:210px}.specs{grid-template-columns:1fr}.spec,.spec:nth-child(even),.spec:nth-child(odd){margin:0}.cta-art{min-height:260px}.cta-copy{padding:32px}}@media(max-width:520px){.wrap{width:calc(100% - 26px)}h1{font-size:58px}.lead{font-size:16px}.meta{gap:15px}.hero{padding-top:115px}section.block{padding:90px 0}.manifest-main{padding:30px 0}.stats{border-left:0;border-top:1px solid #ffffff12;padding:30px 0}.spec{grid-template-columns:120px 1fr}}
 </style></head><body><div id="space"></div><div class="grain"></div>
 <nav class="nav"><a class="brand" href="#"><span class="mark"></span>Космический сборщик</a><div class="links"><a href="#game">Игра</a><a href="#system">Система</a><a href="#tech">Технологии</a></div><a class="launch" href="game/">Запустить ↗</a></nav>
@@ -18,4 +18,109 @@ section.block{padding:125px 0}.head{display:grid;grid-template-columns:.65fr 1.3
 <section class="block" id="tech"><div class="wrap"><div class="head reveal"><div class="kicker">03 / Technical</div><div><h2>Собрано<br>в браузере.</h2><p>Без тяжёлого игрового движка. Игровая логика находится в одном HTML-файле, а 3D-сцена строится процедурно.</p></div></div><div class="specs reveal"><div class="spec"><label>Язык</label><div>HTML5 + CSS3 + JavaScript ES6</div></div><div class="spec"><label>3D engine</label><div>Three.js r140</div></div><div class="spec"><label>Renderer</label><div>WebGLRenderer</div></div><div class="spec"><label>Geometry</label><div>Box / Cone / Sphere / Octahedron / Icosahedron / Dodecahedron</div></div><div class="spec"><label>Game loop</label><div>requestAnimationFrame + delta-time</div></div><div class="spec"><label>Collision</label><div>Distance-based collision detection</div></div><div class="spec"><label>Controls</label><div>WASD / Arrow Keys / Touch Joystick / BOOST</div></div><div class="spec"><label>Audio</label><div>Web Audio API effects</div></div><div class="spec"><label>Responsive</label><div>Desktop + mobile viewport</div></div><div class="spec"><label>Distribution</label><div>Single-file game · no build step</div></div></div></div></section>
 <section class="block"><div class="wrap"><div class="cta reveal"><div class="cta-copy"><div class="kicker">04 / Mission control</div><h2>Готов к запуску.</h2><p>Открой игру прямо сейчас или скачай исходный HTML. Репозиторий разделяет витрину и игровой билд, поэтому их удобно разворачивать отдельно.</p><div class="actions"><a class="btn primary" href="game/">Запустить ↗</a><a class="btn" href="game/index.html" download>Скачать HTML ↓</a></div></div><div class="cta-art"><div class="ring"></div><div class="ring"></div><div class="ring"></div></div></div></div></section></main>
 <footer><div class="wrap foot"><span>КОСМИЧЕСКИЙ СБОРЩИК · 3D SPACE GAME</span><span>THREE.JS / WEBGL / JAVASCRIPT</span></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js"></script><script>(()=>{const s=new THREE.Scene(),c=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,400),r=new THREE.WebGLRenderer({antialias:true,alpha:true}),mount=document.getElementById("space"),hero=document.getElementById("heroModel");r.setPixelRatio(Math.min(devicePixelRatio,1.8));r.setSize(innerWidth,innerHeight);r.outputEncoding=THREE.sRGBEncoding;mount.appendChild(r.domElement);c.position.set(0,1.7,8);s.add(new THREE.AmbientLight(0x9eb8d8,.75));let dl=new THREE.DirectionalLight(0xffffff,1.2);dl.position.set(3,5,4);s.add(dl);let g=new THREE.BufferGeometry(),p=new Float32Array(1800*3);for(let i=0;i<1800;i++){let q=35+Math.random()*145,a=Math.random()*Math.PI*2;p[i*3]=Math.cos(a)*q;p[i*3+1]=Math.sin(a)*q*.62;p[i*3+2]=(Math.random()-.5)*2*q}g.setAttribute("position",new THREE.BufferAttribute(p,3));let stars=new THREE.Points(g,new THREE.PointsMaterial({color:0xa8c9ff,size:.7,transparent:true,opacity:.65}));s.add(stars);let ship=new THREE.Group();hero.appendChild(ship);let metal=new THREE.MeshStandardMaterial({color:0x9db1c7,metalness:.82,roughness:.3}),body=new THREE.Mesh(new THREE.IcosahedronGeometry(1.05,1),metal);body.scale.set(1.65,.48,.72);ship.add(body);let glass=new THREE.MeshStandardMaterial({color:0x102433,metalness:.5,roughness:.12,emissive:0x123f62,emissiveIntensity:1.5}),cock=new THREE.Mesh(new THREE.SphereGeometry(.48,20,14),glass);cock.position.set(.12,.32,.12);cock.scale.set(1,.55,1.25);ship.add(cock);let gm=new THREE.MeshStandardMaterial({color:0x4fd7ff,emissive:0x1b9cff,emissiveIntensity:4});[-.32,.32].forEach(y=>{let e=new THREE.Mesh(new THREE.CylinderGeometry(.12,.18,.62,12),gm);e.rotation.z=Math.PI/2;e.position.set(-.92,y,0);ship.add(e)});let t=0,clock=new THREE.Clock();function a(){requestAnimationFrame(a);let d=Math.min(clock.getDelta(),.04);t+=d;stars.rotation.y+=d*.006;ship.rotation.y=Math.sin(t*.55)*.16;ship.rotation.x=Math.sin(t*.8)*.035;ship.position.y=Math.sin(t*1.1)*.12;gm.emissiveIntensity=3.3+Math.sin(t*8)*.9;c.lookAt(0,0,0);r.render(s,c)}a();addEventListener("resize",()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight)});let io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add("in")),{threshold:.12});document.querySelectorAll(".reveal").forEach(e=>io.observe(e))})();</script></body></html>
+<script>
+(()=> {
+  document.documentElement.classList.add('js-ready');
+  const reveals=document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.08});
+    reveals.forEach(e=>io.observe(e));
+  }else reveals.forEach(e=>e.classList.add('in'));
+
+  const mount=document.getElementById('space');
+  if(!mount)return;
+
+  function startThree(){
+    if(!window.THREE)return;
+    try{
+      const THREE=window.THREE;
+      const scene=new THREE.Scene();
+      const camera=new THREE.PerspectiveCamera(44,innerWidth/innerHeight,.1,320);
+      camera.position.set(0,1.8,8.4);
+
+      const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+      renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));
+      renderer.setSize(innerWidth,innerHeight);
+      renderer.outputEncoding=THREE.sRGBEncoding;
+      mount.appendChild(renderer.domElement);
+
+      scene.add(new THREE.AmbientLight(0x9dbddd,.72));
+      const key=new THREE.DirectionalLight(0xbdeeff,1.25);
+      key.position.set(3,5,4);
+      scene.add(key);
+
+      const starGeo=new THREE.BufferGeometry();
+      const count=1500;
+      const pos=new Float32Array(count*3);
+      for(let i=0;i<count;i++){
+        const radius=32+Math.random()*145;
+        const angle=Math.random()*Math.PI*2;
+        pos[i*3]=Math.cos(angle)*radius;
+        pos[i*3+1]=Math.sin(angle)*radius*.58;
+        pos[i*3+2]=(Math.random()-.5)*radius*1.4;
+      }
+      starGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+      scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0x9edcff,size:.62,transparent:true,opacity:.7})));
+
+      const ship=new THREE.Group();
+      const metal=new THREE.MeshStandardMaterial({color:0x9eb5c7,metalness:.86,roughness:.3});
+      const hull=new THREE.Mesh(new THREE.IcosahedronGeometry(1.05,1),metal);
+      hull.scale.set(1.7,.46,.72);
+      ship.add(hull);
+
+      const glass=new THREE.Mesh(new THREE.SphereGeometry(.46,18,12),new THREE.MeshStandardMaterial({
+        color:0x102f42,metalness:.5,roughness:.12,emissive:0x126d98,emissiveIntensity:1.8
+      }));
+      glass.position.set(.12,.31,.08);
+      glass.scale.set(1,.55,1.25);
+      ship.add(glass);
+
+      const glowMat=new THREE.MeshStandardMaterial({color:0x70e5ff,emissive:0x1aaeff,emissiveIntensity:4});
+      const engine=new THREE.Mesh(new THREE.CylinderGeometry(.12,.2,.7,12),glowMat);
+      engine.rotation.z=Math.PI/2;
+      engine.position.x=-1.02;
+      ship.add(engine);
+
+      const crystal=new THREE.Mesh(new THREE.OctahedronGeometry(.55,1),new THREE.MeshStandardMaterial({
+        color:0x73e5ff,emissive:0x159bd2,emissiveIntensity:3,metalness:.2,roughness:.15
+      }));
+      crystal.position.set(-2.5,1.2,-1.2);
+      scene.add(crystal);
+
+      ship.position.y=.15;
+      scene.add(ship);
+
+      const clock=new THREE.Clock();
+      function loop(){
+        requestAnimationFrame(loop);
+        const d=Math.min(clock.getDelta(),.04);
+        const t=clock.elapsedTime;
+        ship.rotation.y=Math.sin(t*.55)*.16;
+        ship.rotation.x=Math.sin(t*.75)*.035;
+        ship.position.y=.15+Math.sin(t*1.15)*.12;
+        crystal.rotation.x+=d*.65;
+        crystal.rotation.y+=d*1.1;
+        glowMat.emissiveIntensity=3.2+Math.sin(t*8)*.7;
+        scene.rotation.y=t*.012;
+        camera.lookAt(0,0,0);
+        renderer.render(scene,camera);
+      }
+      loop();
+
+      addEventListener('resize',()=>{
+        camera.aspect=innerWidth/innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth,innerHeight);
+      });
+    }catch(error){
+      mount.innerHTML='';
+    }
+  }
+
+  const s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js';
+  s.onload=startThree;
+  s.onerror=()=>{};
+  document.head.appendChild(s);
+})();
+</script></body></html>
