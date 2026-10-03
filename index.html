@@ -1,126 +1,285 @@
 <!doctype html>
-<html lang="ru"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#05070b"><meta name="description" content="Космический сборщик — 3D browser game">
-<title>Космический сборщик · 3D Space Game</title>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#020306">
+<meta name="description" content="Космический сборщик — интерактивный 3D маршрут через Солнечную систему.">
+<title>Космический сборщик · Escape through Space</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-:root{--bg:#05070b;--ink:#edf5ff;--muted:#8795a8;--line:#18303e;--cyan:#79ddff;--violet:#9a8cff}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;background:radial-gradient(circle at 50% 10%,#15466b22,transparent 35%),linear-gradient(transparent 97%,#ffffff06)}a{color:inherit;text-decoration:none}.wrap{width:min(1200px,calc(100% - 36px));margin:auto}#space{position:fixed;inset:0;z-index:-2}.grain{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.nav{position:fixed;z-index:20;top:16px;left:50%;transform:translateX(-50%);width:min(1200px,calc(100% - 24px));padding:9px 10px 9px 15px;border:1px solid #ffffff16;border-radius:16px;background:#05080dcc;backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:space-between}.brand{display:flex;gap:10px;align-items:center;font-weight:600}.mark{width:31px;height:31px;border:1px solid #79ddff66;border-radius:10px;display:grid;place-items:center}.mark:after{content:"";width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 22px var(--cyan)}.links{display:flex;gap:4px}.links a{font-size:12px;color:#8190a2;padding:8px 11px;border-radius:9px}.links a:hover{color:#fff;background:#ffffff08}.launch{padding:9px 13px;border-radius:10px;background:#eaf8ff;color:#061018;font-size:12px;font-weight:700}
-.hero{min-height:100svh;display:grid;align-items:center;padding:125px 0 80px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center}.eyebrow,.kicker{font:500 10px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.18em;color:#7890a5}.eyebrow i{display:inline-block;width:28px;height:1px;background:var(--cyan);vertical-align:middle;margin-right:9px}h1{font-size:clamp(60px,9vw,124px);line-height:.86;letter-spacing:-.075em;margin:22px 0;font-weight:600}h1 span{display:block;color:#718096}.lead{max-width:590px;color:#a4b0c0;font-size:17px;line-height:1.65}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:28px}.btn{padding:13px 16px;border:1px solid #ffffff16;border-radius:12px;background:#ffffff07;font-size:13px;font-weight:600;transition:.25s}.btn:hover{transform:translateY(-2px);border-color:#79ddff55}.btn.primary{background:#eaf8ff;color:#061018;border-color:#eaf8ff}.meta{display:flex;gap:28px;margin-top:42px;font:9px "DM Mono";color:#607086;text-transform:uppercase;letter-spacing:.13em}.meta strong{display:block;color:#b6c4d2;margin-top:6px;font-weight:500}.art{height:560px;position:relative;display:grid;place-items:center;isolation:isolate}.art:before{content:"";position:absolute;width:330px;height:330px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8eeaff 0 2%,#2a7296 17%,#102d43 46%,#050a11 72%);box-shadow:0 0 90px #2588bb22,inset -38px -25px 55px #000b;transform:translateZ(0);z-index:-1}.art:after{content:"";position:absolute;width:470px;height:150px;border:1px solid #79ddff16;border-radius:50%;transform:rotate(-17deg);box-shadow:0 0 60px #79ddff08;z-index:-1}.orbit{position:absolute;width:min(39vw,470px);animation:orbitDrift 16s linear infinite}@keyframes orbitDrift{to{transform:rotateX(67deg) rotateZ(345deg)}}aspect-ratio:1;border:1px solid #79ddff1b;border-radius:50%;transform:rotateX(67deg) rotateZ(-15deg)}.orbit:before,.orbit:after{content:"";position:absolute;border:1px solid #79ddff0e;border-radius:50%}.orbit:before{inset:14%}.orbit:after{inset:30%}.readout{position:absolute;right:0;bottom:9%;width:190px;padding:13px;border:1px solid #ffffff15;background:#070c13b8;backdrop-filter:blur(14px)}.readout small{font:9px "DM Mono";color:#607086}.readout b{display:block;font-size:25px;margin:5px 0}.readout span{font:9px "DM Mono";color:var(--cyan)}
-section.block{padding:125px 0}.head{display:grid;grid-template-columns:.65fr 1.35fr;gap:30px;margin-bottom:48px}.head h2{font-size:clamp(40px,6vw,72px);line-height:.95;letter-spacing:-.06em;margin:0}.head p{color:#8795a8;line-height:1.7;max-width:570px}.feature-grid{display:grid;grid-template-columns:7fr 5fr;gap:12px}.card{min-height:250px;border:1px solid #ffffff12;border-radius:18px;padding:24px;background:linear-gradient(145deg,#0d1723bb,#060a10aa);position:relative;overflow:hidden;transition:.3s}.card:hover{transform:translateY(-5px);border-color:#79ddff44}.card:nth-child(3){grid-column:1/3;min-height:180px}.num{font:10px "DM Mono";color:#607086}.card h3{font-size:25px;margin:40px 0 8px}.card p{color:#7f8da0;line-height:1.55;max-width:560px}.card:after{content:"";position:absolute;right:-90px;bottom:-100px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#79ddff16,transparent 68%)}.manifest{display:grid;grid-template-columns:1.25fr .75fr;border-top:1px solid #ffffff12;border-bottom:1px solid #ffffff12}.manifest-main{padding:42px 40px 42px 0}.manifest-main p{font-size:clamp(26px,3.4vw,43px);line-height:1.1;letter-spacing:-.04em;margin:0}.stats{border-left:1px solid #ffffff12;padding:42px 0 42px 32px}.stat{padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid #ffffff0d}.stat:last-child{border:0;margin:0}.stat b{font-size:31px;font-weight:500}.stat span{display:block;color:#647388;font:9px "DM Mono";text-transform:uppercase;letter-spacing:.13em;margin-top:4px}.specs{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #ffffff12}.spec{display:grid;grid-template-columns:150px 1fr;padding:17px 0;border-bottom:1px solid #ffffff0b;font-size:13px}.spec:nth-child(odd){margin-right:26px}.spec:nth-child(even){margin-left:26px}.spec label{font:9px "DM Mono";color:#607086;text-transform:uppercase;letter-spacing:.12em}.spec div{color:#b2becb}.cta{display:grid;grid-template-columns:1.1fr .9fr;border:1px solid #79ddff30;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#0b1a28dd,#060a10cc)}.cta-copy{padding:48px}.cta h2{font-size:clamp(40px,6vw,68px);line-height:.95;letter-spacing:-.06em;margin:12px 0}.cta p{color:#8795a8;line-height:1.7;max-width:560px}.cta-art{min-height:320px;position:relative;background:radial-gradient(circle,#4bbcff12,transparent 45%)}.ring{position:absolute;inset:15%;border:1px solid #79ddff1b;border-radius:50%;animation:spin 18s linear infinite}.ring:nth-child(2){inset:28%;animation-direction:reverse;animation-duration:11s}.ring:nth-child(3){inset:40%;border-color:#9a8cff2c;animation-duration:7s}@keyframes spin{to{transform:rotate(360deg)}}.reveal{opacity:1;transform:none}.js-ready .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s ease}.js-ready .reveal.in{opacity:1;transform:none}footer{padding:45px 0 70px;border-top:1px solid #ffffff12;color:#607086;font:9px "DM Mono";letter-spacing:.1em}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-@media(max-width:850px){.links{display:none}.hero-grid,.manifest,.cta{grid-template-columns:1fr}.art{height:350px;order:-1}.orbit{width:300px}.readout{right:4%;bottom:0}.head{grid-template-columns:1fr}.feature-grid{grid-template-columns:1fr}.card,.card:nth-child(3){grid-column:auto;min-height:210px}.specs{grid-template-columns:1fr}.spec,.spec:nth-child(even),.spec:nth-child(odd){margin:0}.cta-art{min-height:260px}.cta-copy{padding:32px}}@media(max-width:520px){.wrap{width:calc(100% - 26px)}h1{font-size:58px}.lead{font-size:16px}.meta{gap:15px}.hero{padding-top:115px}section.block{padding:90px 0}.manifest-main{padding:30px 0}.stats{border-left:0;border-top:1px solid #ffffff12;padding:30px 0}.spec{grid-template-columns:120px 1fr}}
-</style></head><body><div id="space"></div><div class="grain"></div>
-<nav class="nav"><a class="brand" href="#"><span class="mark"></span>Космический сборщик</a><div class="links"><a href="#game">Игра</a><a href="#system">Система</a><a href="#tech">Технологии</a></div><a class="launch" href="game/">Запустить ↗</a></nav>
-<main><section class="hero"><div class="wrap hero-grid"><div class="reveal"><div class="eyebrow"><i></i>3D browser game / 2026</div><h1>Собирай.<span>Выживай.</span></h1><p class="lead">Пилотируй корабль через глубокий космос, собирай энергетические кристаллы, уходи от метеоритов и используй временные усилители.</p><div class="actions"><a class="btn primary" href="game/">Запустить игру →</a><a class="btn" href="game/index.html" download>Скачать игру ↓</a></div><div class="meta"><div>engine<strong>Three.js</strong></div><div>platform<strong>Browser / Mobile</strong></div><div>mode<strong>Single player</strong></div></div></div><div class="art reveal"><div class="orbit"></div><div id="heroModel"></div><div class="readout"><small>MISSION STATUS</small><b>ONLINE</b><span>SECTOR 01 · READY</span></div></div></div></section>
-<section class="block" id="game"><div class="wrap"><div class="head reveal"><div class="kicker">01 / Game loop</div><div><h2>Космос не ждёт.</h2><p>Сцена постоянно движется, объекты вращаются, дистанция меняется, а каждый следующий сектор увеличивает давление на игрока.</p></div></div><div class="feature-grid"><article class="card reveal"><span class="num">01</span><h3>Кристаллы</h3><p>Крупные энергетические кристаллы находятся впереди по траектории. Их можно собирать напрямую или притягивать MAGNET.</p></article><article class="card reveal"><span class="num">02</span><h3>Метеоритное поле</h3><p>Неровные многогранные астероиды вращаются с разной скоростью и создают реальные препятствия.</p></article><article class="card reveal"><span class="num">03</span><h3>TURBO · SHIELD · MAGNET</h3><p>Временные усилители меняют правила на несколько секунд. Используй их в момент риска.</p></article></div></div></section>
-<section class="block" id="system"><div class="wrap"><div class="head reveal"><div class="kicker">02 / System</div><div><h2>Маленькая игра.<br>Большая система.</h2><p>Одинаково естественно работает с клавиатурой, стрелками и сенсорным управлением.</p></div></div><div class="manifest reveal"><div class="manifest-main"><p>Полет → сбор → риск → усиление → следующий сектор.</p></div><div class="stats"><div class="stat"><b>5</b><span>Секторов прогресса</span></div><div class="stat"><b>3</b><span>Жизни пилота</span></div><div class="stat"><b>3</b><span>Типа усилений</span></div></div></div></div></section>
-<section class="block" id="tech"><div class="wrap"><div class="head reveal"><div class="kicker">03 / Technical</div><div><h2>Собрано<br>в браузере.</h2><p>Без тяжёлого игрового движка. Игровая логика находится в одном HTML-файле, а 3D-сцена строится процедурно.</p></div></div><div class="specs reveal"><div class="spec"><label>Язык</label><div>HTML5 + CSS3 + JavaScript ES6</div></div><div class="spec"><label>3D engine</label><div>Three.js r140</div></div><div class="spec"><label>Renderer</label><div>WebGLRenderer</div></div><div class="spec"><label>Geometry</label><div>Box / Cone / Sphere / Octahedron / Icosahedron / Dodecahedron</div></div><div class="spec"><label>Game loop</label><div>requestAnimationFrame + delta-time</div></div><div class="spec"><label>Collision</label><div>Distance-based collision detection</div></div><div class="spec"><label>Controls</label><div>WASD / Arrow Keys / Touch Joystick / BOOST</div></div><div class="spec"><label>Audio</label><div>Web Audio API effects</div></div><div class="spec"><label>Responsive</label><div>Desktop + mobile viewport</div></div><div class="spec"><label>Distribution</label><div>Single-file game · no build step</div></div></div></div></section>
-<section class="block"><div class="wrap"><div class="cta reveal"><div class="cta-copy"><div class="kicker">04 / Mission control</div><h2>Готов к запуску.</h2><p>Открой игру прямо сейчас или скачай исходный HTML. Репозиторий разделяет витрину и игровой билд, поэтому их удобно разворачивать отдельно.</p><div class="actions"><a class="btn primary" href="game/">Запустить ↗</a><a class="btn" href="game/index.html" download>Скачать HTML ↓</a></div></div><div class="cta-art"><div class="ring"></div><div class="ring"></div><div class="ring"></div></div></div></div></section></main>
-<footer><div class="wrap foot"><span>КОСМИЧЕСКИЙ СБОРЩИК · 3D SPACE GAME</span><span>THREE.JS / WEBGL / JAVASCRIPT</span></div></footer>
+:root{--bg:#020306;--fg:#f3f7fb;--muted:#8793a2;--line:#ffffff16;--cyan:#76e6ff;--blue:#4aa8ff;--orange:#ffb45b;--red:#ff6e5e}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:#020306;color:var(--fg);font-family:"Space Grotesk",system-ui,sans-serif;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:20;background:radial-gradient(circle at 50% 10%,#0d294022,transparent 34%),linear-gradient(90deg,#0000 49.9%,#ffffff04 50%,#0000 50.1%)}
+#cosmos{position:fixed;inset:0;z-index:0;pointer-events:none}
+#cosmos canvas{display:block;width:100%;height:100%}
+.fallback-space{position:fixed;inset:0;background:radial-gradient(circle at 68% 44%,#193a53 0,#07131d 17%,#020306 48%),radial-gradient(circle at 20% 70%,#102b39 0,#020306 30%);z-index:-1}
+.fallback-space:after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,#dceeff 0 1px,transparent 1.2px);background-size:83px 91px;opacity:.28}
+.nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:50;width:min(1180px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;padding:9px 10px 9px 14px;border:1px solid #ffffff14;border-radius:15px;background:#04070bd9;backdrop-filter:blur(18px)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:13px}
+.logo{width:29px;height:29px;border:1px solid #ffffff1f;border-radius:9px;display:grid;place-items:center}
+.logo:before{content:"";width:8px;height:8px;border-radius:50%;background:#eaf8ff;box-shadow:0 0 20px #76e6ff}
+.navlinks{display:flex;gap:4px}
+.navlinks a{padding:8px 10px;border-radius:8px;color:#7e8b99;font:10px "DM Mono";letter-spacing:.08em}
+.navlinks a:hover{background:#ffffff08;color:#fff}
+.navcta{padding:9px 13px;border-radius:10px;background:#f2f8fc;color:#071018;font-size:11px;font-weight:700}
+.route{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:40;display:grid;gap:11px}
+.route a{width:8px;height:8px;border:1px solid #ffffff55;border-radius:50%;display:block;transition:.25s}
+.route a.active{background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 15px #76e6ff}
+.route-label{position:absolute;right:18px;top:calc(50% + 88px);z-index:40;font:8px "DM Mono";letter-spacing:.18em;color:#667483;writing-mode:vertical-rl}
+.progress{position:fixed;left:0;top:0;height:2px;width:100%;z-index:60;background:#ffffff08}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--orange),var(--red));box-shadow:0 0 16px #76e6ff}
+.story{position:relative;z-index:10}
+.scene{min-height:100svh;display:flex;align-items:center;padding:120px 0 80px}
+.wrap{width:min(1180px,calc(100% - 40px));margin:auto}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:40px}
+.kicker{font:500 10px "DM Mono";letter-spacing:.2em;text-transform:uppercase;color:#718191}
+.kicker b{color:var(--cyan);font-weight:500}
+h1{font-size:clamp(62px,9.5vw,132px);line-height:.83;letter-spacing:-.085em;margin:20px 0 24px;font-weight:600}
+h1 span{display:block;color:#7f8b99}
+.lead{max-width:620px;color:#a9b4c1;font-size:18px;line-height:1.65;margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 16px;border-radius:11px;border:1px solid #ffffff16;background:#ffffff07;font-size:12px;font-weight:600;transition:.25s}
+.btn:hover{transform:translateY(-2px);border-color:#76e6ff55;background:#ffffff0b}
+.btn.primary{background:#eff8ff;color:#071018;border-color:#eff8ff}
+.hero-note{margin-top:40px;display:flex;gap:25px;font:9px "DM Mono";color:#627082;letter-spacing:.12em;text-transform:uppercase}
+.hero-note strong{display:block;color:#b7c3cf;font-weight:500;margin-top:6px}
+.hero-copy{max-width:720px}
+.planet-card{justify-self:end;width:min(500px,100%);aspect-ratio:1;position:relative;display:grid;place-items:center}
+.planet-card .orbital{position:absolute;width:82%;height:31%;border:1px solid #76e6ff1b;border-radius:50%;transform:rotate(-16deg)}
+.planet-card .orbital:nth-child(2){width:66%;height:23%;transform:rotate(24deg);border-color:#ffffff0c}
+.planet-card .label{position:absolute;right:3%;bottom:13%;padding:12px 14px;border:1px solid #ffffff16;background:#03070dcc;backdrop-filter:blur(15px);font:9px "DM Mono";letter-spacing:.14em;color:#748596}
+.planet-card .label strong{display:block;color:#eaf5fb;font-size:22px;letter-spacing:-.03em;margin:4px 0}
+.section-copy{max-width:1180px}
+.section-grid{display:grid;grid-template-columns:.65fr 1.35fr;gap:50px;align-items:start}
+.section-grid h2{font-size:clamp(45px,7vw,88px);line-height:.88;letter-spacing:-.07em;margin:15px 0 0}
+.section-grid p{color:#98a5b4;line-height:1.7;max-width:640px;font-size:16px}
+.scene-index{font:10px "DM Mono";color:#617082;letter-spacing:.18em}
+.scene-index b{color:#fff;font-weight:500}
+.fact-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:34px}
+.fact{border-top:1px solid #ffffff14;padding-top:14px}
+.fact b{font-size:25px;font-weight:500}
+.fact span{display:block;color:#637184;font:9px "DM Mono";text-transform:uppercase;letter-spacing:.1em;margin-top:5px}
+.planet-tag{display:inline-flex;align-items:center;gap:8px;font:9px "DM Mono";letter-spacing:.14em;color:#8796a7}
+.planet-tag i{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.section-visual{min-height:270px;display:flex;align-items:flex-end;justify-content:flex-end}
+.visual-panel{width:min(430px,100%);border:1px solid #ffffff13;border-radius:18px;padding:24px;background:linear-gradient(145deg,#0a1119cc,#03060acc);backdrop-filter:blur(10px)}
+.visual-panel .big{font-size:54px;letter-spacing:-.07em;line-height:.9;margin:10px 0}
+.visual-panel p{font-size:13px;line-height:1.55;color:#7f8c9b;margin:0}
+.earth-note{border-left:2px solid #76e6ff;padding-left:15px}
+.mars-note{border-left:2px solid #ff775f;padding-left:15px}
+.jupiter-note{border-left:2px solid #ffb35c;padding-left:15px}
+.saturn-note{border-left:2px solid #d8c8a8;padding-left:15px}
+.blackhole{min-height:115svh;position:relative;display:flex;align-items:center}
+.blackhole .wrap{position:relative;z-index:3}
+.blackhole-copy{max-width:610px}
+.blackhole h2{font-size:clamp(64px,10vw,140px);line-height:.8;letter-spacing:-.09em;margin:18px 0}
+.blackhole h2 span{color:#737d89}
+.warning{font:10px "DM Mono";letter-spacing:.16em;color:#ff8777}
+.blackhole .closing{color:#8c98a5;line-height:1.7;max-width:530px}
+.endmark{margin-top:38px;display:flex;gap:12px;align-items:center;font:9px "DM Mono";color:#637080;letter-spacing:.15em}
+.endmark i{width:34px;height:1px;background:#ff6e5e;box-shadow:0 0 13px #ff6e5e}
+footer{position:relative;z-index:10;border-top:1px solid #ffffff10;padding:45px 0 70px;color:#5e6a78;font:9px "DM Mono";letter-spacing:.12em}
+.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.reveal{opacity:1;transform:none}
+.js .reveal{opacity:0;transform:translateY(18px);transition:opacity .75s ease,transform .75s ease}
+.js .reveal.in{opacity:1;transform:none}
+@media(max-width:850px){
+  .navlinks{display:none}
+  .hero-grid,.section-grid{grid-template-columns:1fr;gap:22px}
+  .planet-card{justify-self:center;width:min(430px,100%);order:-1;margin-top:30px}
+  .scene{padding:110px 0 70px}
+  .section-grid h2{margin-top:8px}
+  .section-visual{justify-content:flex-start}
+  .route{right:11px}
+}
+@media(max-width:560px){
+  .wrap{width:calc(100% - 26px)}
+  .nav{top:9px}
+  h1{font-size:59px}
+  .lead{font-size:16px}
+  .hero-note{gap:14px;flex-wrap:wrap}
+  .fact-row{grid-template-columns:1fr}
+  .fact{padding-top:12px}
+  .scene{min-height:100svh}
+  .route-label{display:none}
+  .planet-card{aspect-ratio:1/.95}
+  .visual-panel .big{font-size:45px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+<div class="fallback-space"></div>
+<div id="cosmos"></div>
+<div class="progress"><i id="progressBar"></i></div>
+<nav class="nav">
+  <a class="brand" href="#start"><span class="logo"></span>Космический сборщик</a>
+  <div class="navlinks"><a href="#earth">ЗЕМЛЯ</a><a href="#mars">МАРС</a><a href="#saturn">САТУРН</a><a href="#blackhole">ФИНАЛ</a></div>
+  <a class="navcta" href="game/">ЗАПУСТИТЬ ↗</a>
+</nav>
+<div class="route" aria-label="Маршрут"><a href="#start" data-route="start"></a><a href="#earth" data-route="earth"></a><a href="#mars" data-route="mars"></a><a href="#jupiter" data-route="jupiter"></a><a href="#saturn" data-route="saturn"></a><a href="#blackhole" data-route="blackhole"></a></div>
+<div class="route-label">ESCAPE ROUTE · SOLAR SYSTEM</div>
+
+<main class="story">
+<section class="scene" id="start">
+  <div class="wrap hero-grid">
+    <div class="hero-copy reveal">
+      <div class="kicker"><b>01</b> · DEEP SPACE / ESCAPE ROUTE</div>
+      <h1>Собирай.<span>Выживай.</span></h1>
+      <p class="lead">Ты не листаешь лендинг. Ты летишь через Солнечную систему. Пройди планеты, собери энергию, переживи поле астероидов и доберись до точки, где пространство перестаёт быть привычным.</p>
+      <div class="actions"><a class="btn primary" href="game/">Запустить игру →</a><a class="btn" href="game/index.html" download>Скачать HTML ↓</a></div>
+      <div class="hero-note"><div>ENGINE<strong>THREE.JS</strong></div><div>MODE<strong>SINGLE PLAYER</strong></div><div>INPUT<strong>PC + TOUCH</strong></div></div>
+    </div>
+    <div class="planet-card reveal" data-focus="sun"><div class="orbital"></div><div class="orbital"></div><div class="label">CURRENT VECTOR<strong>01 / ORBIT</strong>DEPARTURE · SOL</div></div>
+  </div>
+</section>
+
+<section class="scene" id="earth">
+  <div class="wrap section-grid">
+    <div class="reveal"><div class="scene-index"><b>02</b> / EARTH</div><h2>Дом.<br>Позади.</h2></div>
+    <div class="reveal">
+      <div class="planet-tag"><i></i> BLUE PLANET · MOON INBOUND</div>
+      <p>Земля становится первой точкой маршрута. Здесь начинается ускорение: корабль выходит из безопасной зоны и входит в поток объектов.</p>
+      <div class="fact-row"><div class="fact"><b>1</b><span>Moon</span></div><div class="fact"><b>24h</b><span>Rotation</span></div><div class="fact"><b>01</b><span>Checkpoint</span></div></div>
+      <div class="section-visual"><div class="visual-panel earth-note"><div class="kicker">FLIGHT LOG</div><div class="big">LEAVE<br>ORBIT</div><p>Скролл вперёд меняет положение камеры и корабля. Визуальный маршрут синхронизирован с прогрессом страницы.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="mars">
+  <div class="wrap section-grid">
+    <div class="reveal"><div class="scene-index"><b>03</b> / MARS</div><h2>Красная<br>граница.</h2></div>
+    <div class="reveal">
+      <div class="planet-tag"><i style="background:var(--red);box-shadow:0 0 12px var(--red)"></i> MARS · DUST SECTOR</div>
+      <p>На этом отрезке появляются первые настоящие угрозы. Метеориты проходят по траектории корабля, а кристаллы начинают вести себя как движущиеся цели.</p>
+      <div class="section-visual"><div class="visual-panel mars-note"><div class="kicker">THREAT LEVEL</div><div class="big">02 / 05</div><p>Нажми BOOST в игре, чтобы вырваться из потока. На ПК работает Space, на телефоне удерживай кнопку ускорения.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="jupiter">
+  <div class="wrap section-grid">
+    <div class="reveal"><div class="scene-index"><b>04</b> / JUPITER</div><h2>Газовый<br>гигант.</h2></div>
+    <div class="reveal">
+      <div class="planet-tag"><i style="background:var(--orange);box-shadow:0 0 12px var(--orange)"></i> JUPITER · GRAVITY WELL</div>
+      <p>Масштаб меняется. Здесь пространство ощущается огромным: крупный объект проходит рядом, а поле кристаллов растягивается дальше по вектору.</p>
+      <div class="section-visual"><div class="visual-panel jupiter-note"><div class="kicker">SYSTEM EVENT</div><div class="big">BOOST<br>READY</div><p>TURBO, SHIELD и MAGNET дают короткие преимущества. Собирай их на маршруте и не теряй скорость.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="saturn">
+  <div class="wrap section-grid">
+    <div class="reveal"><div class="scene-index"><b>05</b> / SATURN</div><h2>Кольца.<br>Последний<br>рубеж.</h2></div>
+    <div class="reveal">
+      <div class="planet-tag"><i style="background:#d8c8a8;box-shadow:0 0 12px #d8c8a8"></i> SATURN · RING PLANE</div>
+      <p>Финальный участок Солнечной системы. Камера проходит мимо колец, а звёздное поле ускоряется. Ещё один переход, и привычные ориентиры исчезают.</p>
+      <div class="section-visual"><div class="visual-panel saturn-note"><div class="kicker">FINAL SECTOR</div><div class="big">05 / 05</div><p>Дойди до конца маршрута. После Сатурна начинается финальная сцена.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="blackhole" id="blackhole">
+  <div class="wrap">
+    <div class="blackhole-copy reveal">
+      <div class="warning">06 · EVENT HORIZON / NO RETURN</div>
+      <h2>Чёрная<br><span>дыра.</span></h2>
+      <p class="closing">Солнечная система остаётся позади. В центре финального экрана вращается аккреционный диск, а весь маршрут замыкается вокруг одной точки. Здесь заканчивается побег.</p>
+      <div class="endmark"><i></i>MISSION END · PLAY THE GAME TO ESCAPE</div>
+      <div class="actions"><a class="btn primary" href="game/">Пройти маршрут →</a><a class="btn" href="#start">Вернуться к старту ↑</a></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap foot"><span>КОСМИЧЕСКИЙ СБОРЩИК · 2026</span><span>THREE.JS / WEBGL / JAVASCRIPT · NO BUILD STEP</span></div></footer>
+
 <script>
-(()=> {
-  document.documentElement.classList.add('js-ready');
-  const reveals=document.querySelectorAll('.reveal');
-  if('IntersectionObserver' in window){
-    const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.08});
-    reveals.forEach(e=>io.observe(e));
-  }else reveals.forEach(e=>e.classList.add('in'));
-
-  const mount=document.getElementById('space');
-  if(!mount)return;
-
-  function startThree(){
-    if(!window.THREE)return;
-    try{
-      const THREE=window.THREE;
-      const scene=new THREE.Scene();
-      const camera=new THREE.PerspectiveCamera(44,innerWidth/innerHeight,.1,320);
-      camera.position.set(0,1.8,8.4);
-
-      const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
-      renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));
-      renderer.setSize(innerWidth,innerHeight);
-      renderer.outputEncoding=THREE.sRGBEncoding;
-      mount.appendChild(renderer.domElement);
-
-      scene.add(new THREE.AmbientLight(0x9dbddd,.72));
-      const key=new THREE.DirectionalLight(0xbdeeff,1.25);
-      key.position.set(3,5,4);
-      scene.add(key);
-
-      const starGeo=new THREE.BufferGeometry();
-      const count=1500;
-      const pos=new Float32Array(count*3);
-      for(let i=0;i<count;i++){
-        const radius=32+Math.random()*145;
-        const angle=Math.random()*Math.PI*2;
-        pos[i*3]=Math.cos(angle)*radius;
-        pos[i*3+1]=Math.sin(angle)*radius*.58;
-        pos[i*3+2]=(Math.random()-.5)*radius*1.4;
-      }
-      starGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-      scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0x9edcff,size:.62,transparent:true,opacity:.7})));
-
-      const ship=new THREE.Group();
-      const metal=new THREE.MeshStandardMaterial({color:0x9eb5c7,metalness:.86,roughness:.3});
-      const hull=new THREE.Mesh(new THREE.IcosahedronGeometry(1.05,1),metal);
-      hull.scale.set(1.7,.46,.72);
-      ship.add(hull);
-
-      const glass=new THREE.Mesh(new THREE.SphereGeometry(.46,18,12),new THREE.MeshStandardMaterial({
-        color:0x102f42,metalness:.5,roughness:.12,emissive:0x126d98,emissiveIntensity:1.8
-      }));
-      glass.position.set(.12,.31,.08);
-      glass.scale.set(1,.55,1.25);
-      ship.add(glass);
-
-      const glowMat=new THREE.MeshStandardMaterial({color:0x70e5ff,emissive:0x1aaeff,emissiveIntensity:4});
-      const engine=new THREE.Mesh(new THREE.CylinderGeometry(.12,.2,.7,12),glowMat);
-      engine.rotation.z=Math.PI/2;
-      engine.position.x=-1.02;
-      ship.add(engine);
-
-      const crystal=new THREE.Mesh(new THREE.OctahedronGeometry(.55,1),new THREE.MeshStandardMaterial({
-        color:0x73e5ff,emissive:0x159bd2,emissiveIntensity:3,metalness:.2,roughness:.15
-      }));
-      crystal.position.set(-2.5,1.2,-1.2);
-      scene.add(crystal);
-
-      ship.position.y=.15;
-      scene.add(ship);
-
-      const clock=new THREE.Clock();
-      function loop(){
-        requestAnimationFrame(loop);
-        const d=Math.min(clock.getDelta(),.04);
-        const t=clock.elapsedTime;
-        ship.rotation.y=Math.sin(t*.55)*.16;
-        ship.rotation.x=Math.sin(t*.75)*.035;
-        ship.position.y=.15+Math.sin(t*1.15)*.12;
-        crystal.rotation.x+=d*.65;
-        crystal.rotation.y+=d*1.1;
-        glowMat.emissiveIntensity=3.2+Math.sin(t*8)*.7;
-        scene.rotation.y=t*.012;
-        camera.lookAt(0,0,0);
-        renderer.render(scene,camera);
-      }
-      loop();
-
-      addEventListener('resize',()=>{
-        camera.aspect=innerWidth/innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(innerWidth,innerHeight);
-      });
-    }catch(error){
-      mount.innerHTML='';
-    }
+document.documentElement.classList.add("js");
+(()=>{
+const root=document.getElementById("cosmos");
+const progress=document.getElementById("progressBar");
+const routes=[...document.querySelectorAll("[data-route]")];
+const reveals=[...document.querySelectorAll(".reveal")];
+if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("in")}),{threshold:.08});reveals.forEach(x=>io.observe(x));}else reveals.forEach(x=>x.classList.add("in"));
+const sections=[...document.querySelectorAll(".scene,.blackhole")];
+const state={scroll:0,target:0};
+window.addEventListener("scroll",()=>{state.target=scrollY/(Math.max(1,document.documentElement.scrollHeight-innerHeight))},{passive:true});
+function updateUI(){state.scroll+=(state.target-state.scroll)*.08;progress.style.width=(state.target*100)+"%";let idx=0;sections.forEach((s,i)=>{if(scrollY>=s.offsetTop-innerHeight*.55)idx=i});routes.forEach((r,i)=>r.classList.toggle("active",i===idx));}
+let THREE=null,scene,camera,renderer,ship,world,planets=[],stars,blackDisk;
+function canvasTexture(kind){
+ const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");
+ let g;
+ if(kind==="earth"){g=x.createLinearGradient(0,0,512,512);g.addColorStop(0,"#0c2d58");g.addColorStop(.5,"#1f8bb4");g.addColorStop(1,"#07152c");x.fillStyle=g;x.fillRect(0,0,512,512);for(let i=0;i<55;i++){x.fillStyle=i%3?"#4f9a56aa":"#b9d87999";x.beginPath();x.ellipse(Math.random()*512,Math.random()*512,Math.random()*45+8,Math.random()*20+5,Math.random()*6,0,Math.PI*2);x.fill();}}
+ else if(kind==="mars"){g=x.createRadialGradient(180,170,20,280,280,420);g.addColorStop(0,"#d27a4d");g.addColorStop(.55,"#873b2b");g.addColorStop(1,"#321312");x.fillStyle=g;x.fillRect(0,0,512,512);for(let i=0;i<160;i++){x.fillStyle="#2b1110"+(Math.floor(Math.random()*80)+30).toString(16);x.beginPath();x.arc(Math.random()*512,Math.random()*512,Math.random()*9+1,0,7);x.fill();}}
+ else if(kind==="jupiter"){g=x.createLinearGradient(0,0,0,512);["#7c604c","#d8b28d","#6b4b3d","#d7c09c","#9a6d52","#ead2a6"].forEach((c,i)=>{g.addColorStop(i/5,c)});x.fillStyle=g;x.fillRect(0,0,512,512);for(let i=0;i<80;i++){x.strokeStyle="#ffffff14";x.beginPath();x.moveTo(0,Math.random()*512);x.bezierCurveTo(160,Math.random()*512,340,Math.random()*512,512,Math.random()*512);x.stroke();}x.fillStyle="#b56e54";x.beginPath();x.ellipse(360,310,80,32,-.1,0,7);x.fill();}
+ else if(kind==="saturn"){g=x.createLinearGradient(0,0,512,512);g.addColorStop(0,"#d7c5a0");g.addColorStop(.5,"#9f875e");g.addColorStop(1,"#40382e");x.fillStyle=g;x.fillRect(0,0,512,512);for(let i=0;i<100;i++){x.strokeStyle="#ffffff16";x.beginPath();x.moveTo(0,Math.random()*512);x.lineTo(512,Math.random()*512);x.stroke();}}
+ else {g=x.createRadialGradient(170,160,20,300,300,360);g.addColorStop(0,"#fff3d1");g.addColorStop(.3,"#ffb34d");g.addColorStop(.7,"#a53b1e");g.addColorStop(1,"#220707");x.fillStyle=g;x.fillRect(0,0,512,512);}
+ return new THREE.CanvasTexture(c);
+}
+function makePlanet(kind,radius,pos,ring=false){
+ const g=new THREE.Group();const mat=new THREE.MeshStandardMaterial({map:canvasTexture(kind),roughness:kind==="earth"?.72:.92,metalness:.03});
+ const p=new THREE.Mesh(new THREE.SphereGeometry(radius,48,32),mat);g.add(p);
+ const glow=new THREE.Mesh(new THREE.SphereGeometry(radius*1.045,32,20),new THREE.MeshBasicMaterial({color:kind==="earth"?0x4ec9ff:kind==="mars"?0xff6b49:0xd9c89f,transparent:true,opacity:.045,side:THREE.BackSide}));g.add(glow);
+ if(ring){const rm=new THREE.MeshBasicMaterial({color:0xc8b894,transparent:true,opacity:.58,side:THREE.DoubleSide});const rg=new THREE.RingGeometry(radius*1.45,radius*2.35,96);const rr=new THREE.Mesh(rg,rm);rr.rotation.x=Math.PI/2.35;g.add(rr);}
+ g.position.set(...pos);world.add(g);planets.push(g);return g;
+}
+function makeStars(){
+ const geo=new THREE.BufferGeometry(),arr=new Float32Array(4800*3);
+ for(let i=0;i<4800;i++){const r=35+Math.random()*150,a=Math.random()*Math.PI*2;arr[i*3]=Math.cos(a)*r;arr[i*3+1]=(Math.random()-.5)*110;arr[i*3+2]=Math.sin(a)*r-55;}
+ geo.setAttribute("position",new THREE.BufferAttribute(arr,3));stars=new THREE.Points(geo,new THREE.PointsMaterial({color:0xdcecff,size:.55,transparent:true,opacity:.78}));scene.add(stars);
+}
+function makeShip(){
+ ship=new THREE.Group();
+ const hull=new THREE.Mesh(new THREE.IcosahedronGeometry(.72,1),new THREE.MeshStandardMaterial({color:0xaebdca,metalness:.86,roughness:.25}));hull.scale.set(1.7,.43,.7);ship.add(hull);
+ const nose=new THREE.Mesh(new THREE.ConeGeometry(.42,1.45,6),new THREE.MeshStandardMaterial({color:0xdfe8ee,metalness:.9,roughness:.18}));nose.rotation.x=-Math.PI/2;nose.position.z=-.75;ship.add(nose);
+ const cockpit=new THREE.Mesh(new THREE.SphereGeometry(.35,20,12),new THREE.MeshStandardMaterial({color:0x12364a,emissive:0x0b9fd2,emissiveIntensity:2.4,roughness:.08,metalness:.35}));cockpit.scale.set(1,.55,1.3);cockpit.position.set(.08,.28,.02);ship.add(cockpit);
+ const glow=new THREE.MeshBasicMaterial({color:0x74e7ff});
+ for(const side of [-1,1]){const wing=new THREE.Mesh(new THREE.BoxGeometry(.95,.08,.5),new THREE.MeshStandardMaterial({color:0x647585,metalness:.85,roughness:.3}));wing.position.set(side*.88,0,.18);wing.rotation.z=side*.1;ship.add(wing);const light=new THREE.Mesh(new THREE.SphereGeometry(.06,10,8),glow);light.position.set(side*.75,.02,.65);ship.add(light);}
+ const engine=new THREE.Mesh(new THREE.CylinderGeometry(.1,.16,.6,12),new THREE.MeshBasicMaterial({color:0x8cecff}));engine.rotation.z=Math.PI/2;engine.position.x=-1.02;ship.add(engine);
+ ship.position.set(-1.5,.2,3.8);world.add(ship);
+}
+function makeBlackHole(){
+ const g=new THREE.Group();g.position.set(0,0,-6);world.add(g);
+ const core=new THREE.Mesh(new THREE.SphereGeometry(1.65,48,32),new THREE.MeshBasicMaterial({color:0x000000}));g.add(core);
+ const diskMat=new THREE.MeshBasicMaterial({color:0xff6a2b,transparent:true,opacity:.78,side:THREE.DoubleSide});
+ const disk=new THREE.Mesh(new THREE.RingGeometry(2.0,5.4,128),diskMat);disk.rotation.x=Math.PI/2.5;g.add(disk);blackDisk=disk;
+ const disk2=new THREE.Mesh(new THREE.RingGeometry(2.2,3.6,128),new THREE.MeshBasicMaterial({color:0xffd17a,transparent:true,opacity:.32,side:THREE.DoubleSide}));disk2.rotation.x=Math.PI/2.5;g.add(disk2);
+ const photon=new THREE.Mesh(new THREE.TorusGeometry(1.78,.045,8,96),new THREE.MeshBasicMaterial({color:0xffe1a1,transparent:true,opacity:.9}));photon.rotation.x=Math.PI/2.5;g.add(photon);
+ return g;
+}
+function initThree(){
+ if(!window.THREE)return;
+ try{
+  THREE=window.THREE;scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x020306,.0045);
+  camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,400);camera.position.set(0,1.5,12);
+  renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));renderer.setSize(innerWidth,innerHeight);renderer.outputEncoding=THREE.sRGBEncoding;root.appendChild(renderer.domElement);
+  scene.add(new THREE.AmbientLight(0x9bb7d0,.52));const key=new THREE.DirectionalLight(0xffffff,1.4);key.position.set(4,7,6);scene.add(key);
+  world=new THREE.Group();scene.add(world);makeStars();makeShip();
+  makePlanet("earth",2.05,[-1.2,.1,-3]);const moon=makePlanet("moon",.52,[1.55,.65,-2.1]);moon.children[0].material=new THREE.MeshStandardMaterial({color:0x8d9298,roughness:1});
+  makePlanet("mars",1.35,[2.4,-.2,-8]);makePlanet("jupiter",3.35,[-3,1,-15]);makePlanet("saturn",3.0,[3,.2,-24],true);makeBlackHole();
+  const clock=new THREE.Clock();
+  function loop(){
+   requestAnimationFrame(loop);const t=clock.getElapsedTime();updateUI();
+   const p=state.scroll;const targetZ=10-p*31;const targetX=Math.sin(p*Math.PI*1.15)*3.8;const targetY=1.2+Math.sin(p*Math.PI)*2.0;
+   ship.position.x+=(targetX-ship.position.x)*.045;ship.position.y+=(targetY-ship.position.y)*.045;ship.position.z+=(targetZ-ship.position.z)*.045;
+   ship.rotation.y+=(Math.sin(t*1.5)*.06-ship.rotation.y)*.08;ship.rotation.z+=(Math.sin(p*8)*.14-ship.rotation.z)*.06;
+   camera.position.x+=(ship.position.x*.22-camera.position.x)*.035;camera.position.y+=(ship.position.y+.8-camera.position.y)*.035;camera.position.z+=(ship.position.z+9-camera.position.z)*.035;camera.lookAt(ship.position.x,ship.position.y,ship.position.z-7);
+   planets.forEach((g,i)=>{g.rotation.y+=.0015*(i+1);});
+   stars.rotation.y=t*.004;blackDisk.rotation.z=t*.18;
+   renderer.render(scene,camera);
   }
-
-  const s=document.createElement('script');
-  s.src='https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js';
-  s.onload=startThree;
-  s.onerror=()=>{};
-  document.head.appendChild(s);
+  loop();
+  addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+ }catch(e){console.warn("3D scene fallback",e)}
+}
+const script=document.createElement("script");script.src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js";script.onload=initThree;script.onerror=()=>{};document.head.appendChild(script);
+window.addEventListener("scroll",updateUI,{passive:true});updateUI();
 })();
-</script></body></html>
+</script>
+</body>
+</html>
