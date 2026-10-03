@@ -3,129 +3,111 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#05070a">
-<title>Космический сборщик // COMMAND DECK</title>
+<meta name="theme-color" content="#030507">
+<title>Космический сборщик | игра</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
-:root{--bg:#030507;--fg:#eef4f6;--muted:#87939b;--line:#d8edf218;--cyan:#7ee8ff;--pink:#ff3f75;--acid:#d7ff43}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"DM Mono",monospace;overflow-x:hidden}body{min-height:100vh}
-#stage{position:fixed;inset:0;z-index:0;background:#030507}canvas{display:block;width:100%;height:100%}
-.noise,.scan{position:fixed;inset:0;pointer-events:none;z-index:10}.noise{opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}.scan{opacity:.045;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,#fff 4px)}
-body:after{content:"";position:fixed;inset:0;z-index:9;pointer-events:none;background:radial-gradient(circle at 50% 50%,transparent 28%,#000a 100%),linear-gradient(90deg,#0008,transparent 28%,transparent 72%,#0008)}
-header{position:fixed;z-index:20;top:0;left:0;right:0;height:76px;padding:0 4vw;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#030507e8,transparent)}
-.brand{font-size:11px;letter-spacing:.16em;color:#dce7eb;display:flex;gap:12px;align-items:center}.brand i{width:25px;height:25px;display:block;border:1px solid #ffffff55;transform:skew(-18deg);position:relative}.brand i:after{content:"";position:absolute;left:5px;top:5px;width:8px;height:8px;background:var(--pink);box-shadow:10px 10px 0 var(--cyan)}
-nav{display:flex;gap:28px;align-items:center}nav a{color:#849199;font-size:9px;letter-spacing:.13em}nav a:hover{color:#fff}.play{color:#030507;background:#edf7f9;padding:10px 15px;clip-path:polygon(0 0,100% 0,100% 75%,88% 100%,0 100%)}
-main{position:relative;z-index:4}.hero{height:100svh;min-height:680px;display:flex;align-items:flex-end;padding:0 7vw 10vh}.hero-copy{max-width:850px}.kicker{font-size:10px;color:var(--cyan);letter-spacing:.25em;margin-bottom:15px}.hero h1{font:800 clamp(80px,13vw,190px)/.76 "Barlow Condensed";letter-spacing:-.055em;text-transform:uppercase;margin:0;color:#f3f7f8;text-shadow:0 0 50px #000}.hero h1 span{display:block;color:transparent;-webkit-text-stroke:1px #eef4f633}.hero p{max-width:570px;color:#a5b0b5;font-size:12px;line-height:1.8;margin:28px 0 0}.hero-actions{display:flex;gap:10px;margin-top:25px}.btn{display:inline-flex;align-items:center;gap:15px;padding:13px 18px;color:#e9f2f4;border:1px solid #ffffff2c;font-size:9px;letter-spacing:.12em;background:#06090cd9}.btn:hover{border-color:#7ee8ff99}.btn.main{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:0 0 28px #ff3f7538}.btn small{opacity:.55}
-.corner{position:fixed;z-index:21;font-size:8px;color:#69767d;letter-spacing:.13em}.tl{top:92px;left:4vw}.tr{top:92px;right:4vw;text-align:right}.bl{bottom:25px;left:4vw}.br{bottom:25px;right:4vw;text-align:right}.tr b{color:var(--acid);font-weight:500}
-.hero-hud{position:absolute;right:6vw;bottom:12vh;width:245px;color:#7d898f;font-size:8px;letter-spacing:.13em}.hudline{height:1px;background:#ffffff1c;margin:9px 0 14px}.readout{display:flex;justify-content:space-between;margin:7px 0}.readout b{font-weight:500;color:#e6eef1}.meter{height:2px;background:#ffffff16;margin-top:4px}.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--pink));width:82%}
-.section{min-height:95svh;display:flex;align-items:center;padding:130px 8vw}.content{max-width:1100px;width:100%;margin:auto}.section-label{font-size:9px;color:var(--cyan);letter-spacing:.22em;margin-bottom:18px}.big{font:700 clamp(64px,10vw,150px)/.78 "Barlow Condensed";letter-spacing:-.05em;text-transform:uppercase;margin:0}.big em{font-style:normal;color:#768188}.copy{max-width:560px;color:#9aa6ac;font-size:12px;line-height:1.85;margin-top:28px}.rule{width:100%;height:1px;background:#ffffff18;margin:32px 0}.stats{display:flex;gap:42px;flex-wrap:wrap}.stat b{display:block;font:600 32px "Barlow Condensed";color:#f1f5f6}.stat span{font-size:8px;color:#67737a;letter-spacing:.14em}
-.section.split{min-height:100svh}.split .content{display:grid;grid-template-columns:1fr .8fr;gap:9vw;align-items:end}.tech{font-size:9px;letter-spacing:.12em;color:#7b878e}.tech div{padding:15px 0;border-bottom:1px solid #ffffff15;display:flex;justify-content:space-between}.tech b{color:#dfe8eb;font-weight:500}
-.ship-section{min-height:110svh;align-items:flex-start;padding-top:18vh}.ship-title{max-width:680px}.ship-title .big{font-size:clamp(85px,14vw,205px)}.ship-meta{margin-top:45px;display:flex;gap:40px;flex-wrap:wrap}.ship-meta strong{display:block;font:600 26px "Barlow Condensed";color:#f4f7f8}.ship-meta span{font-size:8px;color:#6f7a80;letter-spacing:.15em}
-.game-section{min-height:105svh}.game-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:7vw;align-items:end}.game-grid .big{font-size:clamp(75px,12vw,180px)}.missions{margin-top:35px}.mission{display:grid;grid-template-columns:38px 1fr auto;gap:15px;padding:14px 0;border-top:1px solid #ffffff18;font-size:9px;color:#88949a}.mission:last-child{border-bottom:1px solid #ffffff18}.mission b{color:#e9f1f3;font-weight:500}.mission i{font-style:normal;color:var(--cyan)}
-footer{position:relative;z-index:5;padding:50px 8vw 65px;border-top:1px solid #ffffff18;color:#68747b;font-size:8px;letter-spacing:.1em;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-@media(max-width:800px){nav a:not(.play){display:none}.hero{padding:0 7vw 9vh;min-height:780px}.hero h1{font-size:74px}.hero-hud{position:relative;right:auto;bottom:auto;margin-top:32px;width:100%}.tr{top:90px}.section{padding:115px 7vw}.split .content,.game-grid{grid-template-columns:1fr;gap:45px}.ship-section{padding-top:25vh}.corner{font-size:7px}.bl,.br{bottom:12px}.hero p{font-size:11px}}
+:root{--bg:#020406;--text:#f1f5f6;--muted:#a7b0b5;--cyan:#8ce9ff;--pink:#ff476f;--lime:#d9ff50}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:"DM Mono",monospace;overflow-x:hidden}
+#space{position:fixed;inset:0;z-index:0}canvas{display:block;width:100%;height:100%}
+body:before{content:"";position:fixed;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,#020406e8 0%,#02040670 34%,transparent 68%),radial-gradient(circle at 70% 45%,transparent 20%,#0008 100%)}
+body:after{content:"";position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.025;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,#fff 4px)}
+header{position:fixed;z-index:20;top:0;left:0;right:0;height:74px;padding:0 5vw;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#020406f2,transparent)}
+.logo{font:700 18px "Barlow Condensed";letter-spacing:.05em;text-transform:uppercase}.logo span{color:var(--pink)}
+nav{display:flex;gap:26px;align-items:center}nav a{font-size:9px;letter-spacing:.14em;color:#9aa5aa;text-decoration:none}nav a:hover{color:#fff}.launch{color:#030507!important;background:#edf5f6;padding:10px 15px}
+main{position:relative;z-index:5}.screen{min-height:100svh;padding:18vh 7vw 12vh;display:flex;align-items:center}.inner{width:min(1180px,100%);margin:auto}
+.hero{min-height:100svh;align-items:flex-end;padding-bottom:11vh}.eyebrow{font-size:10px;color:var(--cyan);letter-spacing:.22em;margin-bottom:18px}.hero h1{font:800 clamp(86px,14vw,205px)/.72 "Barlow Condensed";letter-spacing:-.055em;text-transform:uppercase;margin:0;max-width:1000px}.hero h1 span{display:block;color:transparent;-webkit-text-stroke:1px #f1f5f655}.hero-lead{font-size:14px;line-height:1.8;color:#d0d8db;max-width:670px;margin:34px 0 0}.actions{display:flex;gap:10px;margin-top:28px}.btn{display:inline-block;text-decoration:none;color:#eef5f7;font-size:9px;letter-spacing:.13em;padding:13px 17px;border:1px solid #ffffff35}.btn.primary{background:var(--pink);border-color:var(--pink);box-shadow:0 0 32px #ff476f38}.meta{position:absolute;right:6vw;bottom:8vh;text-align:right;color:#78848a;font-size:8px;line-height:1.8;letter-spacing:.12em}.meta b{color:var(--lime);font-weight:500}
+h2{font:800 clamp(70px,11vw,160px)/.75 "Barlow Condensed";letter-spacing:-.05em;text-transform:uppercase;margin:0}h2 span{color:#69757c}.lead{font-size:13px;line-height:1.9;color:#d0d8db;max-width:610px;margin:30px 0 0}.section-no{font-size:9px;color:var(--cyan);letter-spacing:.2em;margin-bottom:18px}
+.reading{max-width:690px;margin-left:4vw}.facts{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:30px;max-width:700px}.fact strong{display:block;font:700 34px "Barlow Condensed";color:#fff}.fact span{display:block;color:#7f8b91;font-size:8px;line-height:1.6;letter-spacing:.1em;margin-top:4px}
+.controls{margin-top:45px;display:flex;gap:38px;flex-wrap:wrap}.control b{display:block;font:600 23px "Barlow Condensed";color:#fff}.control span{font-size:8px;color:#77838a}
+.planet-copy{max-width:660px}.planet-copy p{font-size:13px;line-height:1.9;color:#d3dadd}.planet-list{display:flex;gap:28px;flex-wrap:wrap;margin-top:42px}.planet-list span{font:600 24px "Barlow Condensed";color:#dce4e7}.planet-list small{display:block;font:400 8px "DM Mono";color:#718087;letter-spacing:.1em;margin-top:3px}
+.tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 80px;max-width:900px;margin-top:42px}.tech-row{display:flex;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px solid #ffffff1a;font-size:9px;color:#78848a}.tech-row b{font-weight:500;color:#e9f0f2}
+.final{min-height:85svh;display:flex;align-items:flex-end;padding-bottom:14vh}.final h2{font-size:clamp(90px,15vw,220px)}.final p{font-size:13px;color:#c9d1d5;line-height:1.8;max-width:600px}
+footer{position:relative;z-index:5;padding:35px 7vw 55px;border-top:1px solid #ffffff18;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:#69757b;font-size:8px;letter-spacing:.08em}
+@media(max-width:800px){header{height:62px;padding:0 6vw}.logo{font-size:16px}nav a:not(.launch){display:none}.screen{padding:20vh 7vw 14vh}.hero{padding-bottom:9vh;min-height:100svh}.hero h1{font-size:76px}.hero-lead,.lead{font-size:11px;line-height:1.8}.meta{position:relative;right:auto;bottom:auto;text-align:left;margin-top:30px}.facts{grid-template-columns:1fr 1fr;gap:25px}.tech-grid{grid-template-columns:1fr}.planet-list{gap:20px}.final h2{font-size:86px}}
 </style>
 </head>
 <body>
-<div id="stage"></div><div class="noise"></div><div class="scan"></div>
-<header><a class="brand" href="#top"><i></i>КОСМИЧЕСКИЙ СБОРЩИК</a><nav><a href="#game">GAME</a><a href="#ship">SHIP</a><a href="#systems">SYSTEMS</a><a class="play" href="game/">LAUNCH GAME ↗</a></nav></header>
-<div class="corner tl">SYS // COMMAND DECK 02.30</div><div class="corner tr">CONNECTION <b>STABLE</b><br>SECTOR // 01</div><div class="corner bl">THREE.JS / WEBGL / GLTF</div><div class="corner br">ONLINE<br>2026.10</div>
+<div id="space"></div>
+<header><a class="logo" href="#top">КОСМИЧЕСКИЙ <span>СБОРЩИК</span></a><nav><a href="#about">ОБ ИГРЕ</a><a href="#how">КАК ИГРАТЬ</a><a href="#world">МИР</a><a href="#tech">ТЕХНОЛОГИИ</a><a class="launch" href="game/">ЗАПУСТИТЬ ИГРУ ↗</a></nav></header>
 <main id="top">
-<section class="hero" id="game"><div class="hero-copy"><div class="kicker">SURVIVAL FLIGHT SYSTEM // ONLINE</div><h1>Космический<span>сборщик.</span></h1><p>Это не каталог космоса. Это командная палуба игры. Корабль, скорость, кристаллы и угроза находятся в одной живой сцене, а солнечная система остаётся глубиной пространства.</p><div class="hero-actions"><a class="btn main" href="game/">ИГРАТЬ СЕЙЧАС <small>↗</small></a><a class="btn" href="game/index.html" download>СКАЧАТЬ BUILD <small>↓</small></a></div><div class="hero-hud"><div>FLIGHT TELEMETRY</div><div class="hudline"></div><div class="readout"><span>HULL</span><b>100%</b></div><div class="meter"><i></i></div><div class="readout"><span>BOOST CORE</span><b>READY</b></div><div class="readout"><span>THREAT</span><b>LOW / 01</b></div></div></div></section>
+<section class="screen hero"><div class="inner"><div class="eyebrow">КОСМИЧЕСКАЯ ИГРА // СИСТЕМА ПОЛЁТА ОНЛАЙН</div><h1>Космический<span>сборщик.</span></h1><p class="hero-lead">Тебе нужно управлять кораблём, собирать кристаллы и переживать столкновения с астероидами. С каждым сектором пространство становится опаснее. Никакой экскурсии по планетам: это игра про полёт, скорость и выживание.</p><div class="actions"><a class="btn primary" href="game/">ИГРАТЬ</a><a class="btn" href="#about">ЧТО ЗА ИГРА ↓</a></div><div class="meta">SECTOR 01<br>FLIGHT SYSTEM <b>ONLINE</b><br>WEBGL / REALTIME</div></div></section>
 
-<section class="section" id="systems"><div class="content"><div class="section-label">01 // THE WORLD IS BACKGROUND</div><h2 class="big">Планеты<br><em>не интерфейс.</em></h2><p class="copy">Земля, Марс, Юпитер и Сатурн остаются частью глубины кадра. Они не перекрывают контент и не превращают сайт в экскурсию по солнечной системе. Реальные 2K карты поверхности, физическое освещение, атмосфера и кольца работают как кинематографический фон.</p><div class="rule"></div><div class="stats"><div class="stat"><b>2K</b><span>SURFACE MAPS</span></div><div class="stat"><b>7000+</b><span>STARS</span></div><div class="stat"><b>60 FPS</b><span>ADAPTIVE RENDER</span></div><div class="stat"><b>WEBGL</b><span>REALTIME</span></div></div></div></section>
+<section class="screen" id="about"><div class="inner reading"><div class="section-no">01 / ОБ ИГРЕ</div><h2>Летишь.<br><span>Собираешь.</span><br>Выживаешь.</h2><p class="lead">«Космический сборщик» это небольшая 3D-игра прямо в браузере. Ты управляешь кораблём в открытом космосе. На маршруте появляются светящиеся кристаллы. Их нужно собирать, одновременно избегая астероидов.</p><p class="lead">За собранные кристаллы растёт счёт. Потеря всех жизней заканчивает попытку. В игре есть ускорение, защитные механики и более сложные сектора.</p><div class="facts"><div class="fact"><strong>3</strong><span>ЖИЗНИ НА СТАРТЕ</span></div><div class="fact"><strong>14+</strong><span>КРИСТАЛЛОВ В СЕКТОРЕ</span></div><div class="fact"><strong>∞</strong><span>ПОВТОРНЫХ ПОПЫТОК</span></div></div></div></section>
 
-<section class="section ship-section" id="ship"><div class="content"><div class="ship-title"><div class="section-label">02 // SHIP DESIGN / OPEN SOURCE ASSET</div><h2 class="big">NOMAD<br><em>VX-01</em></h2><p class="copy">Вместо примитивной геометрии используется полноценная текстурированная модель космического корабля из открытого WebGL-проекта Helios. Модель имеет PBR-материалы, normal map, metallic/roughness и emissive map, а лицензия ассета CC BY 4.0. Поверх неё добавлены собственные engine glow, подсветка, камера и кинематографическая постановка.</p><div class="ship-meta"><div><strong>06</strong><span>DEGREES OF FREEDOM</span></div><div><strong>BOOST</strong><span>THRUST CORE</span></div><div><strong>MAGNET</strong><span>CRYSTAL FIELD</span></div><div><strong>SHIELD</strong><span>IMPACT SYSTEM</span></div></div></div></div></section>
+<section class="screen" id="how"><div class="inner reading"><div class="section-no">02 / КАК ИГРАТЬ</div><h2>Просто<br><span>управляй.</span></h2><p class="lead">На компьютере используй WASD или стрелки. На телефоне доступны сенсорные элементы управления. Двигайся к кристаллам, удерживай ускорение в нужный момент и не подставляйся под астероиды.</p><div class="controls"><div class="control"><b>W A S D</b><span>ДВИЖЕНИЕ</span></div><div class="control"><b>SPACE</b><span>УСКОРЕНИЕ</span></div><div class="control"><b>TOUCH</b><span>ТЕЛЕФОН</span></div><div class="control"><b>ESC</b><span>ПАУЗА</span></div></div></div></section>
 
-<section class="section game-section"><div class="content game-grid"><div><div class="section-label">03 // MISSION CONTROL</div><h2 class="big">Игра<br><em>начинается.</em></h2><p class="copy">Собирай кристаллы, уходи от астероидов, используй BOOST и переживай всё более опасные сектора. Сайт ведёт прямо в игру, а не заставляет читать километры текста.</p><div class="missions"><div class="mission"><span>01</span><b>ORBITAL DEPARTURE</b><i>READY</i></div><div class="mission"><span>02</span><b>RED FRONTIER</b><i>LOCKED</i></div><div class="mission"><span>03</span><b>GIANT'S GRAVITY</b><i>LOCKED</i></div><div class="mission"><span>04</span><b>RING PLANE</b><i>LOCKED</i></div><div class="mission"><span>05</span><b>EVENT HORIZON</b><i>UNKNOWN</i></div></div></div><div class="tech"><div><span>ENGINE</span><b>THREE.JS 0.160</b></div><div><span>RENDER</span><b>WEBGL / BLOOM</b></div><div><span>MODEL</span><b>GLTF / PBR</b></div><div><span>INPUT</span><b>KEYBOARD / TOUCH</b></div><div><span>MODE</span><b>SURVIVAL</b></div></div></div></section>
+<section class="screen" id="world"><div class="inner planet-copy"><div class="section-no">03 / МИР ИГРЫ</div><h2>Космос<br><span>живёт вокруг.</span></h2><p>Планеты здесь не являются отдельными страницами и не требуют изучения. Они создают масштаб и настроение полёта. Камера проходит через разные участки системы, а текст остаётся главным источником информации об игре.</p><p>Поверхности планет сделаны на основе настоящих 2K-карт. Земля, Марс, Юпитер и Сатурн имеют разные материалы, освещение и атмосферный эффект. Звёзды находятся на большой глубине, поэтому пространство не выглядит плоским.</p><div class="planet-list"><div><span>ЗЕМЛЯ</span><small>2K SURFACE</small></div><div><span>МАРС</span><small>2K SURFACE</small></div><div><span>ЮПИТЕР</span><small>2K SURFACE</small></div><div><span>САТУРН</span><small>RINGS + 2K</small></div><div><span>ЛУНА</span><small>NASA LROC</small></div></div></div></section>
+
+<section class="screen" id="tech"><div class="inner reading"><div class="section-no">04 / ТЕХНОЛОГИИ</div><h2>Как это<br><span>работает.</span></h2><p class="lead">Игра и сайт работают в браузере. Отдельного лаунчера или установки движка не требуется. Графика строится в реальном времени на видеокарте устройства.</p><div class="tech-grid"><div class="tech-row"><span>ДВИЖОК</span><b>THREE.JS</b></div><div class="tech-row"><span>ГРАФИКА</span><b>WEBGL</b></div><div class="tech-row"><span>3D-МОДЕЛИ</span><b>GLTF</b></div><div class="tech-row"><span>ПЛАНЕТЫ</span><b>2K TEXTURES</b></div><div class="tech-row"><span>УПРАВЛЕНИЕ</span><b>KEYBOARD + TOUCH</b></div><div class="tech-row"><span>ФИЗИКА</span><b>DISTANCE COLLISION</b></div></div></div></section>
+
+<section class="screen final"><div class="inner"><div class="section-no">05 / СТАРТ</div><h2>Готов<br><span>лететь?</span></h2><p>Открывай игру и попробуй пройти первый сектор. Всё остальное узнаешь уже в полёте.</p><div class="actions"><a class="btn primary" href="game/">ЗАПУСТИТЬ ИГРУ ↗</a></div></div></section>
 </main>
-<footer><span>КОСМИЧЕСКИЙ СБОРЩИК // COMMAND DECK</span><span>SHIP ASSET: JAZOONE / CC BY 4.0</span><span>PLANET TEXTURES: SOLAR SYSTEM SCOPE / CC BY 4.0</span></footer>
+<footer><span>КОСМИЧЕСКИЙ СБОРЩИК</span><span>Планеты: Solar System Scope / CC BY 4.0</span><span>Луна: NASA LROC</span></footer>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from "three";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 import {EffectComposer} from "three/addons/postprocessing/EffectComposer.js";
 import {RenderPass} from "three/addons/postprocessing/RenderPass.js";
 import {UnrealBloomPass} from "three/addons/postprocessing/UnrealBloomPass.js";
 import {OutputPass} from "three/addons/postprocessing/OutputPass.js";
 
-const texBase="https://cdn.jsdelivr.net/gh/sudoaanish/COSMOS@master/assets/textures/";
-const shipURL="https://cdn.jsdelivr.net/gh/BradPerbs/Helios@main/src/models/spaceship/scene.gltf";
-const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0x030507,.0017);
-const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,700);
-camera.position.set(0,1.5,12);
+const base="https://cdn.jsdelivr.net/gh/sudoaanish/COSMOS@master/assets/textures/";
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x020406);scene.fog=new THREE.FogExp2(0x020406,.00105);
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,800);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
-renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
-renderer.setSize(innerWidth,innerHeight);
-renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.12;
-document.querySelector("#stage").appendChild(renderer.domElement);
-const composer=new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene,camera));
-const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.72,.55,.72);
-composer.addPass(bloom);composer.addPass(new OutputPass());
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+document.querySelector("#space").appendChild(renderer.domElement);
+const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.55,.5,.76));composer.addPass(new OutputPass());
 
-const world=new THREE.Group();scene.add(world);
-scene.add(new THREE.AmbientLight(0x8aa0b4,.28));
-const key=new THREE.PointLight(0xffe0bb,34,180);key.position.set(-18,8,12);scene.add(key);
-const rim=new THREE.PointLight(0x24dfff,20,100);rim.position.set(12,-2,4);scene.add(rim);
+scene.add(new THREE.AmbientLight(0x7890a5,.25));
+const sunLight=new THREE.PointLight(0xffd9aa,60,220);sunLight.position.set(-20,8,8);scene.add(sunLight);
+const blueLight=new THREE.PointLight(0x2adfff,25,120);blueLight.position.set(20,-8,8);scene.add(blueLight);
 
-function texture(url){const t=new THREE.TextureLoader().load(url);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t}
-function planet(url,r,pos,light=true){const g=new THREE.Group();const mat=new THREE.MeshStandardMaterial({map:texture(url),roughness:.86,metalness:.03});const m=new THREE.Mesh(new THREE.SphereGeometry(r,96,64),mat);g.add(m);g.position.set(...pos);world.add(g);if(light){const atm=new THREE.Mesh(new THREE.SphereGeometry(r*1.045,64,48),new THREE.ShaderMaterial({transparent:true,side:THREE.BackSide,blending:THREE.AdditiveBlending,uniforms:{c:{value:new THREE.Color(0x42baff)}},vertexShader:"varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}",fragmentShader:"uniform vec3 c;varying vec3 vN;void main(){float f=pow(1.0-max(dot(vN,vec3(0.0,0.0,1.0)),0.0),3.2);gl_FragColor=vec4(c,f*.38);}"}));g.add(atm)}return g}
-const earth=planet(texBase+"earth-2k.jpg",2.45,[-3.4,-.8,-15]);
-const mars=planet(texBase+"mars-2k.jpg",1.25,[5,1.8,-25]);
-const jupiter=planet(texBase+"jupiter-2k.jpg",3.8,[-7,2.4,-42]);
-const saturn=planet(texBase+"saturn-2k.jpg",3.15,[8,-1.5,-53]);
-const moon=planet(texBase+"moon-lroc-2k.jpg",.62,[1.8,2,-12],false);
-const ringMat=new THREE.MeshStandardMaterial({color:0xcbbd9f,roughness:.9,metalness:0,transparent:true,opacity:.72,side:THREE.DoubleSide});
-const ring=new THREE.Mesh(new THREE.RingGeometry(4.2,6.6,192),ringMat);ring.rotation.x=Math.PI/2.55;saturn.add(ring);
-
-const starGeo=new THREE.BufferGeometry();const starCount=9500;const pos=new Float32Array(starCount*3);
-for(let i=0;i<starCount;i++){const r=45+Math.random()*300,a=Math.random()*Math.PI*2;pos[i*3]=Math.cos(a)*r;pos[i*3+1]=(Math.random()-.5)*180;pos[i*3+2]=Math.sin(a)*r-70}
-starGeo.setAttribute("position",new THREE.BufferAttribute(pos,3));
-const starMat=new THREE.PointsMaterial({color:0xd9efff,size:.45,sizeAttenuation:true,transparent:true,opacity:.8});
-const stars=new THREE.Points(starGeo,starMat);scene.add(stars);
-
-const shipRoot=new THREE.Group();scene.add(shipRoot);
-const loader=new GLTFLoader();
-loader.load(shipURL,(gltf)=>{
-  const model=gltf.scene;
-  model.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;if(o.material){o.material.envMapIntensity=1.7}}});
-  model.scale.setScalar(.0065);
-  model.rotation.y=Math.PI;
-  shipRoot.add(model);
-},undefined,()=>{fallbackShip()});
-
-function fallbackShip(){
-  const g=new THREE.Group(),body=new THREE.MeshStandardMaterial({color:0x69757c,metalness:.95,roughness:.2}),dark=new THREE.MeshStandardMaterial({color:0x151b20,metalness:.9,roughness:.25}),glow=new THREE.MeshBasicMaterial({color:0x4be8ff});
-  const core=new THREE.Mesh(new THREE.IcosahedronGeometry(1,2),body);core.scale.set(2.5,.42,1.05);g.add(core);
-  const nose=new THREE.Mesh(new THREE.ConeGeometry(.62,2.6,6),body);nose.rotation.x=-Math.PI/2;nose.position.z=-1.9;g.add(nose);
-  for(const s of[-1,1]){const wing=new THREE.Mesh(new THREE.BoxGeometry(1.7,.12,1),dark);wing.position.set(s*1.6,0,.2);wing.rotation.z=s*.12;g.add(wing)}
-  const canopy=new THREE.Mesh(new THREE.SphereGeometry(.48,32,20),new THREE.MeshStandardMaterial({color:0x0b3340,emissive:0x1ee6ff,emissiveIntensity:2.8,metalness:.7,roughness:.1}));canopy.scale.set(1,.45,1.35);canopy.position.y=.32;g.add(canopy);shipRoot.add(g)
+const loader=new THREE.TextureLoader();const cache=new Map();
+function tex(url){if(cache.has(url))return cache.get(url);const t=loader.load(url);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();cache.set(url,t);return t}
+function makePlanet(url,r,pos,atmo=0x65d8ff){
+ const g=new THREE.Group();g.position.set(...pos);
+ const m=new THREE.Mesh(new THREE.SphereGeometry(r,112,80),new THREE.MeshStandardMaterial({map:tex(url),roughness:.9,metalness:.02}));
+ g.add(m);
+ const glow=new THREE.Mesh(new THREE.SphereGeometry(r*1.035,80,56),new THREE.ShaderMaterial({transparent:true,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false,uniforms:{color:{value:new THREE.Color(atmo)}},vertexShader:"varying vec3 n;void main(){n=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",fragmentShader:"uniform vec3 color;varying vec3 n;void main(){float f=pow(1.-max(dot(n,vec3(0.,0.,1.)),0.),3.5);gl_FragColor=vec4(color,f*.34);}"}));
+ g.add(glow);scene.add(g);return g;
 }
-const engine=new THREE.PointLight(0x3ee8ff,22,18);engine.position.set(0,0,2);shipRoot.add(engine);
-const engineGlow=new THREE.Mesh(new THREE.ConeGeometry(.38,2.6,24,1,true),new THREE.MeshBasicMaterial({color:0x39e8ff,transparent:true,opacity:.28,blending:THREE.AdditiveBlending,side:THREE.DoubleSide}));engineGlow.rotation.x=Math.PI/2;engineGlow.position.z=1.6;shipRoot.add(engineGlow);
+const planets=[
+ makePlanet(base+"earth-2k.jpg",2.7,[0,1,-18],0x48c9ff),
+ makePlanet(base+"mars-2k.jpg",1.55,[5,-1,-38],0xff6a38),
+ makePlanet(base+"jupiter-2k.jpg",4.5,[-7,2,-64],0xffb87a),
+ makePlanet(base+"saturn-2k.jpg",3.7,[8,-2,-92],0xffd8a96b),
+ makePlanet(base+"neptune-2k.jpg",3.0,[-6,2,-122],0x397fff)
+];
+const saturn=planets[3];const ring=new THREE.Mesh(new THREE.RingGeometry(5.0,7.9,256),new THREE.MeshBasicMaterial({color:0xcbbd9f,transparent:true,opacity:.68,side:THREE.DoubleSide,depthWrite:false}));ring.rotation.x=Math.PI/2.35;saturn.add(ring);
 
-let scrollTarget=0,scroll=0;addEventListener("scroll",()=>scrollTarget=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight));
+const moon=makePlanet(base+"moon-lroc-2k.jpg",.72,[3,2,-14],0xaaaeb5);
+const sun=new THREE.Mesh(new THREE.SphereGeometry(8,96,64),new THREE.MeshBasicMaterial({map:tex("https://cdn.jsdelivr.net/gh/jeromeetienne/threex.planets@master/images/sunmap.jpg")}));
+sun.position.set(-20,7,-100);scene.add(sun);
+const sunGlow=new THREE.Mesh(new THREE.SphereGeometry(10.5,64,48),new THREE.MeshBasicMaterial({color:0xff8b32,transparent:true,opacity:.055,blending:THREE.AdditiveBlending,depthWrite:false}));sunGlow.position.copy(sun.position);scene.add(sunGlow);
+
+const sg=new THREE.BufferGeometry(),N=12000,p=new Float32Array(N*3);
+for(let i=0;i<N;i++){const r=70+Math.random()*360,a=Math.random()*Math.PI*2;p[i*3]=Math.cos(a)*r;p[i*3+1]=(Math.random()-.5)*220;p[i*3+2]=Math.sin(a)*r-70}
+sg.setAttribute("position",new THREE.BufferAttribute(p,3));scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0xd9ecff,size:.42,sizeAttenuation:true,opacity:.8,transparent:true})));
+
+let target=0,progress=0;addEventListener("scroll",()=>target=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight));
 const clock=new THREE.Clock();
-function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();scroll+=(scrollTarget-scroll)*.045;
-  const flightZ=8-scroll*48;const flightX=Math.sin(scroll*5.2)*2.4;const flightY=1.2+Math.sin(scroll*3.2)*.8;
-  shipRoot.position.lerp(new THREE.Vector3(flightX,flightY,flightZ),.035);
-  shipRoot.rotation.y=Math.PI+Math.sin(t*.55)*.12;shipRoot.rotation.z=Math.sin(t*.8)*.035;shipRoot.rotation.x=Math.sin(scroll*7)*.025;
-  engineGlow.scale.x=1+Math.sin(t*15)*.12;engineGlow.scale.y=1+Math.sin(t*11)*.08;engine.intensity=18+Math.sin(t*18)*5;
-  camera.position.x+=(shipRoot.position.x*.17-camera.position.x)*.035;
-  camera.position.y+=(shipRoot.position.y+1.2-camera.position.y)*.035;
-  camera.position.z+=(shipRoot.position.z+10.5-camera.position.z)*.035;
-  camera.lookAt(shipRoot.position.x,shipRoot.position.y,shipRoot.position.z-9);
-  earth.rotation.y+=.0012;mars.rotation.y+=.0009;jupiter.rotation.y+=.00055;saturn.rotation.y+=.0007;moon.rotation.y+=.002;
-  moon.position.x=1.8+Math.cos(t*.25)*1.1;moon.position.z=-12+Math.sin(t*.25)*1.1;
-  ring.rotation.z=t*.012;stars.rotation.y=t*.0015;
-  composer.render()
+function frame(){
+ requestAnimationFrame(frame);const t=clock.getElapsedTime();progress+=(target-progress)*.055;
+ const z=11-progress*138;
+ const x=Math.sin(progress*10)*1.6;const y=1.4+Math.sin(progress*7)*.65;
+ camera.position.x+=(x-camera.position.x)*.035;camera.position.y+=(y-camera.position.y)*.035;camera.position.z+=(z-camera.position.z)*.035;
+ camera.lookAt(x*.4,y*.5,z-13);
+ planets.forEach((g,i)=>{g.rotation.y+=.0011-i*.00012;g.rotation.x=Math.sin(t*.12+i)*.002});
+ moon.position.x=3+Math.cos(t*.22)*1.4;moon.position.z=-14+Math.sin(t*.22)*1.4;moon.rotation.y+=.0018;
+ saturn.rotation.z=Math.sin(t*.08)*.05;ring.rotation.z=t*.012;
+ sun.rotation.y+=.00025;sunGlow.scale.setScalar(1+Math.sin(t*1.2)*.018);
+ sg.rotation.y=t*.00055;
+ composer.render()
 }
-animate();
+camera.position.set(0,1.4,12);frame();
 addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight)});
 </script>
 </body>
