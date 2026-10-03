@@ -174,6 +174,7 @@ button.primary{background:linear-gradient(135deg,rgba(0,234,255,.18),rgba(255,57
 
 let scene,camera,renderer,clock;
 let player,playerGroup;
+let levelBanner=null,levelBannerTitle=null,levelBannerSub=null;
 const crystals=[],asteroids=[],particles=[],stars=[];
 const keys={};
 let state="MENU",score=0,lives=3,collected=0,level=1,combo=0,comboTimer=0,invuln=0;
@@ -210,6 +211,9 @@ function initScene(){
   camera.position.set(0,9,13);
 
   renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
+  renderer.domElement.setAttribute("aria-label","3D game canvas");
+  renderer.domElement.addEventListener("webglcontextlost",e=>{e.preventDefault(); state="PAUSED"; toast("WEBGL CONTEXT LOST");});
+  renderer.domElement.addEventListener("webglcontextrestored",()=>{toast("WEBGL RESTORED"); state="MENU";});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
   renderer.setSize(innerWidth,innerHeight);
   renderer.outputEncoding=THREE.sRGBEncoding;
@@ -503,12 +507,15 @@ function beep(type){
   
 
   function showSectorBanner(){
+    levelBanner=document.getElementById("levelBanner");
+    levelBannerTitle=document.getElementById("levelBannerTitle");
+    levelBannerSub=document.getElementById("levelBannerSub");
     if(!levelBanner) return;
     levelBannerTitle.textContent = `SECTOR ${sector}`;
-    levelBannerSub.textContent = sector===1 ? 'Collect the crystals. Hostiles are approaching.' : `Threat level increased • ${sectorGoal} crystals required`;
-    levelBanner.style.opacity='1';
-    sectorBannerTimer=2.2;
-    setTimeout(()=>{ if(levelBanner) levelBanner.style.opacity='0'; },1800);
+    levelBannerSub.textContent = sector===1 ? "Collect the crystals. Hostiles are approaching." : `Threat level increased • ${sectorGoal} crystals required`;
+    levelBanner.style.opacity="1";
+    clearTimeout(showSectorBanner.timer);
+    showSectorBanner.timer=setTimeout(()=>{ if(levelBanner) levelBanner.style.opacity="0"; },1800);
   }
 
   
@@ -519,7 +526,18 @@ function beep(type){
   boostRegen=Math.max(9,18-sector*1.4);
   initBuffSpawns();
 }
-function showSectorBanner(){toast("SECTOR "+sector+" // THREAT INCREASED");}
+function showSectorBanner(){
+  const banner=document.getElementById("levelBanner");
+  const title=document.getElementById("levelBannerTitle");
+  const sub=document.getElementById("levelBannerSub");
+  if(banner&&title&&sub){
+    title.textContent="SECTOR "+sector;
+    sub.textContent="THREAT INCREASED • "+sectorGoal+" CRYSTALS REQUIRED";
+    banner.style.opacity="1";
+    clearTimeout(showSectorBanner.timer);
+    showSectorBanner.timer=setTimeout(()=>banner.style.opacity="0",1800);
+  } else toast("SECTOR "+sector+" // THREAT INCREASED");
+}
 function createBuff(type){
   const g=new THREE.Group();
   const defs={turbo:{color:0xff6fbc},shield:{color:0x75d8ff},magnet:{color:0xffd36b}};
