@@ -1,0 +1,19 @@
+import {useFrame,useThree} from "@react-three/fiber";
+import {Detailed,Stars,useTexture} from "@react-three/drei";
+import {EffectComposer,Bloom,Vignette} from "@react-three/postprocessing";
+import * as THREE from "three";
+import {useMemo,useRef} from "react";
+
+const BASE="https://cdn.jsdelivr.net/gh/sudoaanish/COSMOS@master/assets/textures/";
+const PLANETS=[
+ ["Mercury","mercury-2k.jpg",.42,5.2,.9,0xc5c2bb],["Venus","venus-2k.jpg",.62,7.2,.72,0xd9aa70],
+ ["Earth","earth-2k.jpg",.72,9.5,.61,0x4bb9ff],["Mars","mars-2k.jpg",.52,12.1,.52,0xff7258],
+ ["Jupiter","jupiter-2k.jpg",1.55,16,.31,0xe3b57c],["Saturn","saturn-2k.jpg",1.28,20.3,.24,0xe1ca99],
+ ["Uranus","uranus-2k.jpg",.9,24.6,.17,0x7edbe1],["Neptune","neptune-2k.jpg",.88,28.4,.13,0x4f7cf4]
+];
+
+function Orbit({radius}){const geometry=useMemo(()=>{const p=[];for(let i=0;i<=180;i++){const a=i/180*Math.PI*2;p.push(new THREE.Vector3(Math.cos(a)*radius,0,Math.sin(a)*radius*.88))}return new THREE.BufferGeometry().setFromPoints(p)},[radius]);return <line geometry={geometry}><lineBasicMaterial color="#a7d9e6" transparent opacity={.1}/></line>}
+function Planet({data,index}){const[name,file,radius,orbit,speed,atmosphere]=data;const texture=useTexture(BASE+file);const group=useRef(null);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;useFrame(({clock})=>{const t=clock.elapsedTime*speed*.08+index*.72;if(!group.current)return;group.current.position.set(Math.cos(t)*orbit,Math.sin(t*.8+index)*.35,Math.sin(t)*orbit*.88);group.current.rotation.y+=.002+index*.00015});return <><Orbit radius={orbit}/><group ref={group} name={name}><Detailed distances={[0,90,180]}><mesh castShadow receiveShadow><sphereGeometry args={[radius,64,40]}/><meshStandardMaterial map={texture} roughness={.9}/></mesh><mesh><sphereGeometry args={[radius,28,18]}/><meshStandardMaterial map={texture} roughness={1}/></mesh><mesh><sphereGeometry args={[radius,14,10]}/><meshStandardMaterial map={texture} roughness={1}/></mesh></Detailed><mesh scale={1.045}><sphereGeometry args={[radius,32,20]}/><meshBasicMaterial color={atmosphere} transparent opacity={.035} side={THREE.BackSide} depthWrite={false}/></mesh>{name==="Saturn"&&<mesh rotation={[-Math.PI/2.35,0,0]}><ringGeometry args={[radius*1.45,radius*2.45,128]}/><meshStandardMaterial color="#c8b894" roughness={1} transparent opacity={.62} side={THREE.DoubleSide}/></mesh>}</group></>}
+function Sun(){const ref=useRef(null);useFrame(({clock})=>{if(ref.current)ref.current.rotation.y=clock.elapsedTime*.025});return <group ref={ref}><mesh><sphereGeometry args={[2.8,64,48]}/><meshStandardMaterial color="#fff1b2" emissive="#ff9a20" emissiveIntensity={5} roughness={1}/></mesh><pointLight color="#fff0c4" intensity={150} distance={180} decay={2}/><mesh scale={1.25}><sphereGeometry args={[2.8,40,28]}/><meshBasicMaterial color="#ff9a20" transparent opacity={.08} side={THREE.BackSide} depthWrite={false}/></mesh></group>}
+function CameraParallax(){const{camera,pointer}=useThree();useFrame(({clock})=>{const t=clock.elapsedTime;const x=pointer.x*2.2+Math.sin(t*.05)*.7;const y=8+pointer.y*1.1+Math.cos(t*.04)*.35;const z=27+Math.sin(t*.035)*1.2;camera.position.x=THREE.MathUtils.lerp(camera.position.x,x,.025);camera.position.y=THREE.MathUtils.lerp(camera.position.y,y,.025);camera.position.z=THREE.MathUtils.lerp(camera.position.z,z,.025);camera.lookAt(0,0,-4)});return null}
+export default function SolarSystem(){return <><color attach="background" args={["#02040a"]}/><fog attach="fog" args={["#02040a",75,260]}/><ambientLight intensity={.035}/><hemisphereLight args={["#b7e9ff","#02030a",.13]}/><Sun/>{PLANETS.map((p,i)=><Planet key={p[0]} data={p} index={i}/>)}<Stars radius={260} depth={170} count={9000} factor={2.1} saturation={0} fade speed={.08}/><CameraParallax/><EffectComposer multisampling={0}><Bloom luminanceThreshold={.72} mipmapBlur intensity={1.1} radius={.7}/><Vignette eskil={false} offset={.2} darkness={.72}/></EffectComposer></>}
