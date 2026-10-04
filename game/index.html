@@ -299,14 +299,8 @@ function applyRockMaps(){
 }
 function enhanceShipMaterials(){
   if(!player)return;
-  player.traverse(o=>{
-    if(!o.isMesh||!o.material)return;
-    if(o.material.isMeshStandardMaterial||o.material.isMeshPhysicalMaterial){
-      o.material.envMap=envMap||o.material.envMap||null;
-      o.material.envMapIntensity=envMap?1.15:0;
-      o.material.needsUpdate=true;
-    }
-  });
+  // The ship intentionally keeps its authored materials.
+  // Environment lighting may enhance the scene, but never replaces ship materials.
 }
 function enhanceCrystalMaterials(){
   if(!crystals.length||!envMap)return;
@@ -578,139 +572,120 @@ function createBackdrop(){
   function initPlayer(){
   playerGroup=new THREE.Group();
 
-  // 2030 interceptor silhouette: central armored fuselage, swept wings,
-  // split tail, cockpit canopy, vector engines and visible weapon hardpoints.
-  const hullMat=new THREE.MeshStandardMaterial({
-    color:0x9ba9b4,metalness:.88,roughness:.24
+  // Visible mobile-first interceptor. Core silhouette uses emissive/physical
+  // materials so it remains readable even when external HDR/PBR assets fail.
+  const hull=new THREE.MeshStandardMaterial({
+    color:0x9fb4c0,metalness:.55,roughness:.30,
+    emissive:0x12202a,emissiveIntensity:.8
   });
-  const armorMat=new THREE.MeshStandardMaterial({
-    color:0x26343e,metalness:.82,roughness:.28
+  const armor=new THREE.MeshStandardMaterial({
+    color:0x415564,metalness:.65,roughness:.27,
+    emissive:0x08131b,emissiveIntensity:.65
   });
-  const darkMat=new THREE.MeshStandardMaterial({
-    color:0x0b1218,metalness:.72,roughness:.31
+  const dark=new THREE.MeshStandardMaterial({
+    color:0x17242d,metalness:.5,roughness:.3,
+    emissive:0x061019,emissiveIntensity:.8
   });
-  const edgeMat=new THREE.MeshStandardMaterial({
-    color:0x6f8492,metalness:.9,roughness:.18
+  const glass=new THREE.MeshStandardMaterial({
+    color:0x55d9ff,metalness:.08,roughness:.12,
+    emissive:0x168db4,emissiveIntensity:2.8,
+    transparent:true,opacity:.94
   });
-  const glassMat=new THREE.MeshPhysicalMaterial({
-    color:0x163c54,metalness:.08,roughness:.06,
-    transmission:.25,ior:1.48,transparent:true,opacity:.92,
-    emissive:0x063b55,emissiveIntensity:1.1
-  });
-  const cyan=new THREE.MeshStandardMaterial({
-    color:0xa9f6ff,emissive:0x24dfff,emissiveIntensity:4.5,
-    metalness:.15,roughness:.12
-  });
-  const red=new THREE.MeshStandardMaterial({
-    color:0xffc1c1,emissive:0xff241f,emissiveIntensity:3.2
-  });
+  const cyan=new THREE.MeshBasicMaterial({color:0x62eaff});
+  const cyanGlow=new THREE.MeshBasicMaterial({color:0x19d9ff,transparent:true,opacity:.78});
+  const red=new THREE.MeshBasicMaterial({color:0xff4557});
 
-  // Main armored fuselage.
-  const body=new THREE.Mesh(new THREE.BoxGeometry(1.18,.62,3.55),hullMat);
-  body.position.y=.38;body.scale.z=1.02;playerGroup.add(body);
+  // Central fuselage, deliberately broad so it cannot disappear into the background.
+  const body=new THREE.Mesh(new THREE.BoxGeometry(1.55,.72,3.65),hull);
+  body.position.set(0,.42,0);playerGroup.add(body);
 
-  const upperSpine=new THREE.Mesh(new THREE.BoxGeometry(.58,.38,2.55),armorMat);
-  upperSpine.position.set(0,.78,.12);upperSpine.rotation.x=-.035;playerGroup.add(upperSpine);
+  const nose=new THREE.Mesh(new THREE.ConeGeometry(.82,2.45,6),hull);
+  nose.rotation.x=-Math.PI/2;nose.position.set(0,.43,-2.35);nose.scale.set(1,.72,1);playerGroup.add(nose);
 
-  const nose=new THREE.Mesh(new THREE.ConeGeometry(.73,2.35,6),hullMat);
-  nose.rotation.x=-Math.PI/2;nose.scale.set(1,.72,1);nose.position.set(0,.42,-2.12);playerGroup.add(nose);
+  const lower=new THREE.Mesh(new THREE.BoxGeometry(.72,.28,2.15),dark);
+  lower.position.set(0,.05,-.25);playerGroup.add(lower);
 
-  const lowerKeel=new THREE.Mesh(new THREE.ConeGeometry(.46,1.65,5),darkMat);
-  lowerKeel.rotation.x=Math.PI/2;lowerKeel.position.set(0,-.02,-.82);lowerKeel.scale.set(1,.45,1);playerGroup.add(lowerKeel);
+  // Cockpit.
+  const canopy=new THREE.Mesh(new THREE.SphereGeometry(.68,20,12),glass);
+  canopy.scale.set(1,.50,1.32);canopy.position.set(0,.98,-.62);playerGroup.add(canopy);
 
-  // Canopy with frame.
-  const canopy=new THREE.Mesh(new THREE.SphereGeometry(.58,24,14),glassMat);
-  canopy.scale.set(1,.52,1.42);canopy.position.set(0,.87,-.55);playerGroup.add(canopy);
+  const canopyFrame=new THREE.Mesh(new THREE.TorusGeometry(.63,.055,8,24),cyan);
+  canopyFrame.rotation.x=Math.PI/2;canopyFrame.position.set(0,.98,-.62);
+  canopyFrame.scale.z=1.24;playerGroup.add(canopyFrame);
 
-  const canopyFrame=new THREE.Mesh(new THREE.TorusGeometry(.54,.045,8,28),edgeMat);
-  canopyFrame.rotation.x=Math.PI/2;canopyFrame.position.set(0,.87,-.55);canopyFrame.scale.z=1.25;playerGroup.add(canopyFrame);
+  const canopySpine=new THREE.Mesh(new THREE.BoxGeometry(.075,.045,1.05),cyan);
+  canopySpine.position.set(0,1.17,-.66);playerGroup.add(canopySpine);
 
-  const canopyStripe=new THREE.Mesh(new THREE.BoxGeometry(.055,.035,1.0),cyan);
-  canopyStripe.position.set(0,1.02,-.58);playerGroup.add(canopyStripe);
-
-  // Swept main wings.
+  // Swept wings.
   for(const side of [-1,1]){
-    const wing=new THREE.Mesh(new THREE.BoxGeometry(2.25,.15,1.18),armorMat);
-    wing.position.set(side*1.12,.27,.20);
-    wing.rotation.z=side*.12;wing.rotation.y=side*.20;
+    const wing=new THREE.Mesh(new THREE.BoxGeometry(2.55,.20,1.28),armor);
+    wing.position.set(side*1.22,.31,.12);
+    wing.rotation.z=side*.10;wing.rotation.y=side*.18;
     playerGroup.add(wing);
 
-    const leading=new THREE.Mesh(new THREE.BoxGeometry(1.75,.07,.16),edgeMat);
-    leading.position.set(side*1.65,.39,-.38);
-    leading.rotation.z=side*.11;leading.rotation.y=side*.2;
-    playerGroup.add(leading);
+    const wingEdge=new THREE.Mesh(new THREE.BoxGeometry(2.0,.055,.13),cyanGlow);
+    wingEdge.position.set(side*1.55,.44,-.40);
+    wingEdge.rotation.z=side*.10;wingEdge.rotation.y=side*.18;
+    playerGroup.add(wingEdge);
 
-    const tip=new THREE.Mesh(new THREE.BoxGeometry(.28,.18,.82),hullMat);
-    tip.position.set(side*2.05,.25,.58);tip.rotation.z=side*.16;playerGroup.add(tip);
+    const tip=new THREE.Mesh(new THREE.BoxGeometry(.32,.22,.72),hull);
+    tip.position.set(side*2.12,.30,.55);
+    tip.rotation.z=side*.14;playerGroup.add(tip);
 
-    // Vertical stabilizer.
-    const fin=new THREE.Mesh(new THREE.BoxGeometry(.14,.72,.92),armorMat);
-    fin.position.set(side*.62,.68,.73);fin.rotation.z=side*.22;playerGroup.add(fin);
+    const fin=new THREE.Mesh(new THREE.BoxGeometry(.16,.78,.88),armor);
+    fin.position.set(side*.68,.72,.72);
+    fin.rotation.z=side*.22;playerGroup.add(fin);
 
-    // Cyan energy rail and red nav light.
-    const rail=new THREE.Mesh(new THREE.BoxGeometry(.055,.035,.88),cyan);
-    rail.position.set(side*1.58,.39,.06);rail.rotation.z=side*.08;playerGroup.add(rail);
-
-    const nav=new THREE.Mesh(new THREE.SphereGeometry(.075,10,8),red);
-    nav.position.set(side*2.06,.36,-.04);playerGroup.add(nav);
+    const nav=new THREE.Mesh(new THREE.SphereGeometry(.09,10,8),red);
+    nav.position.set(side*2.14,.39,-.02);playerGroup.add(nav);
   }
 
-  // Twin engine pods with nozzles and internal glow.
+  // Twin engines.
   for(const side of [-1,1]){
-    const pod=new THREE.Mesh(new THREE.CylinderGeometry(.30,.40,.92,18),darkMat);
-    pod.rotation.x=Math.PI/2;pod.position.set(side*.52,.05,1.40);playerGroup.add(pod);
+    const engine=new THREE.Mesh(new THREE.CylinderGeometry(.34,.43,.92,16),dark);
+    engine.rotation.x=Math.PI/2;engine.position.set(side*.56,.08,1.42);playerGroup.add(engine);
 
-    const ring=new THREE.Mesh(new THREE.TorusGeometry(.30,.055,8,22),edgeMat);
-    ring.rotation.x=Math.PI/2;ring.position.set(side*.52,.05,1.86);playerGroup.add(ring);
+    const nozzle=new THREE.Mesh(new THREE.TorusGeometry(.34,.065,8,20),cyan);
+    nozzle.rotation.x=Math.PI/2;nozzle.position.set(side*.56,.08,1.91);playerGroup.add(nozzle);
 
-    const nozzle=new THREE.Mesh(new THREE.CylinderGeometry(.19,.25,.12,18),cyan);
-    nozzle.rotation.x=Math.PI/2;nozzle.position.set(side*.52,.05,1.91);playerGroup.add(nozzle);
+    const flame=new THREE.Mesh(new THREE.ConeGeometry(.22,.9,12),cyanGlow);
+    flame.rotation.x=Math.PI/2;flame.position.set(side*.56,.08,2.40);
+    flame.userData.engineFlame=true;playerGroup.add(flame);
 
-    const flame=new THREE.Mesh(new THREE.ConeGeometry(.20,.95,14),cyan);
-    flame.rotation.x=Math.PI/2;flame.position.set(side*.52,.05,2.35);flame.scale.z=.8;flame.userData.engineFlame=true;playerGroup.add(flame);
-
-    const light=new THREE.PointLight(0x27ddff,2.4,7);
-    light.position.set(side*.52,.05,2.05);light.userData.engineLight=true;playerGroup.add(light);
+    const engineLight=new THREE.PointLight(0x29dcff,2.8,8);
+    engineLight.position.set(side*.56,.08,2.08);
+    engineLight.userData.engineLight=true;playerGroup.add(engineLight);
   }
 
-  // Twin forward weapon mounts.
+  // Weapon hardpoints.
   for(const side of [-1,1]){
-    const mount=new THREE.Mesh(new THREE.CylinderGeometry(.075,.10,.52,12),darkMat);
-    mount.rotation.x=Math.PI/2;mount.position.set(side*.47,.30,-1.22);playerGroup.add(mount);
-    const emitter=new THREE.Mesh(new THREE.SphereGeometry(.095,10,8),cyan);
-    emitter.position.set(side*.47,.30,-1.50);playerGroup.add(emitter);
+    const mount=new THREE.Mesh(new THREE.CylinderGeometry(.09,.12,.58,12),dark);
+    mount.rotation.x=Math.PI/2;mount.position.set(side*.52,.37,-1.34);playerGroup.add(mount);
+    const emitter=new THREE.Mesh(new THREE.SphereGeometry(.105,10,8),cyan);
+    emitter.position.set(side*.52,.37,-1.66);playerGroup.add(emitter);
   }
 
-  const underRing=new THREE.Mesh(
-    new THREE.TorusGeometry(1.20,.035,8,40),
-    new THREE.MeshBasicMaterial({color:0x1aaed0,transparent:true,opacity:.5})
+  // Readability outline / energy ring. This is secondary, never the only visible part.
+  const ring=new THREE.Mesh(
+    new THREE.TorusGeometry(1.42,.035,8,40),
+    new THREE.MeshBasicMaterial({color:0x27dfff,transparent:true,opacity:.34})
   );
-  underRing.rotation.x=Math.PI/2;underRing.position.y=-.32;underRing.scale.set(1.45,.72,1);playerGroup.add(underRing);
+  ring.rotation.x=Math.PI/2;ring.position.y=-.43;ring.scale.set(1.35,.65,1);
+  playerGroup.add(ring);
 
-  playerGroup.scale.setScalar(1.08);
-  playerGroup.position.set(0,.15,6);
+  playerGroup.scale.setScalar(1.28);
+  playerGroup.position.set(0,.35,4.8);
   scene.add(playerGroup);
   player=playerGroup;
 
-  // Shield dome is deliberately subtle until the buff activates.
   playerShieldVisual=new THREE.Mesh(
-    new THREE.SphereGeometry(2.35,28,20),
-    new THREE.MeshStandardMaterial({
-      color:0x75d8ff,emissive:0x2a9dff,emissiveIntensity:1.8,
-      transparent:true,opacity:.10,wireframe:true
+    new THREE.SphereGeometry(2.65,24,16),
+    new THREE.MeshBasicMaterial({
+      color:0x55d9ff,transparent:true,opacity:.10,wireframe:true
     })
   );
   playerShieldVisual.visible=false;
   playerGroup.add(playerShieldVisual);
-
-  // Make the detail pass actually part of the ship.
-  addShipDetailLegacyGlow(playerGroup);
-}
-
-function addShipDetailLegacyGlow(ship){
-  const glow=new THREE.MeshBasicMaterial({color:0x54eaff,transparent:true,opacity:.42});
-  const strip=new THREE.Mesh(new THREE.BoxGeometry(.035,.035,1.8),glow);
-  strip.position.set(0,.47,-.48);ship.add(strip);
 }
 
 function initCrystals(){
@@ -988,9 +963,9 @@ function updateShipFX(t){
 }
 
 function updateCamera(dt){
-  const target=new THREE.Vector3(player.position.x*.52,6.4,player.position.z+12.0);
+  const target=new THREE.Vector3(player.position.x*.48,7.0,player.position.z+11.5);
   camera.position.lerp(target,1-Math.pow(.001,dt));
-  const look=new THREE.Vector3(player.position.x*.72,.45,player.position.z-3.8);
+  const look=new THREE.Vector3(player.position.x*.68,.45,player.position.z-1.4);
   camera.lookAt(look);
 }
 function updateCrystals(dt,t){
@@ -1093,7 +1068,7 @@ function updateLoop(){
       });
       updateAsteroids(dt);updateParticles(dt);updateStars(dt);
       if(comboTimer>0){comboTimer-=dt;if(comboTimer<=0){combo=0;updateHUD();}}
-      if(invuln>0){invuln-=dt;player.visible=Math.floor(invuln*12)%2===0||invuln<=0;}
+      if(invuln>0){invuln-=dt;player.visible=Math.floor(invuln*9)%2===0||invuln<=0;}
       else player.visible=true;
       updateDifficulty();
     }else if(state==="MENU"){
