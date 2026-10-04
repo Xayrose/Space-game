@@ -221,7 +221,9 @@ function initScene(){
   renderer.domElement.setAttribute("aria-label","3D game canvas");
   renderer.domElement.addEventListener("webglcontextlost",e=>{e.preventDefault(); state="PAUSED"; toast("WEBGL CONTEXT LOST");});
   renderer.domElement.addEventListener("webglcontextrestored",()=>{toast("WEBGL RESTORED"); state="MENU";});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.55));
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.setSize(innerWidth,innerHeight);
   renderer.outputEncoding=THREE.sRGBEncoding;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -444,24 +446,37 @@ function hitUFO(u){
   if(u.userData.hp<=0){score+=500;u.visible=false;beep("level");toast("HOSTILE DESTROYED // +500");}
 }
 function updateUFOs(dt,t){
+  // UFO flight + firing. Player shots are updated once per frame outside this loop.
   ufos.forEach(u=>{
     if(!u.visible)return;
     u.position.x+=Math.sin(t*.65+u.userData.phase)*dt*(u.userData.boss?2.1:1.4);
-    u.position.y=u.userData.baseY+4.5+Math.sin(t*1.1+u.userData.phase)*.75;
+    u.position.y=4.5+Math.sin(t*1.1+u.userData.phase)*.75;
     u.position.z+=dt*(u.userData.boss?.35:.65);
-    u.rotation.z=Math.sin(t*1.7+u.userData.phase)*.08;u.rotation.y+=dt*(u.userData.boss?.35:.55);
+    u.rotation.z=Math.sin(t*1.7+u.userData.phase)*.08;
+    u.rotation.y+=dt*(u.userData.boss?.35:.55);
     u.userData.fireTimer-=dt;
     if(u.userData.fireTimer<=0){
       fireUFO(u);
       u.userData.fireTimer=sector>=5?2:sector>=4?2.5:rand(2.3,3.0);
     }
-    for(const s of playerShots){
-      if(!s.active)continue;
-      s.mesh.position.addScaledVector(s.vel,dt);
-      if(s.mesh.position.distanceTo(u.position)<(u.userData.boss?2.5:1.55)){s.active=false;s.mesh.visible=false;hitUFO(u);break}
-      if(s.mesh.position.z<-180){s.active=false;s.mesh.visible=false}
-    }
+    if(u.position.z>12){u.position.z=rand(-42,-30);u.position.x=rand(-15,15);}
   });
+
+  for(const s of playerShots){
+    if(!s.active)continue;
+    s.mesh.position.addScaledVector(s.vel,dt);
+    let hit=false;
+    for(const u of ufos){
+      if(!u.visible)continue;
+      if(s.mesh.position.distanceTo(u.position)<(u.userData.boss?2.5:1.55)){
+        s.active=false;s.mesh.visible=false;hitUFO(u);hit=true;break;
+      }
+    }
+    if(!hit&&(s.mesh.position.z<-180||Math.abs(s.mesh.position.x)>60)){
+      s.active=false;s.mesh.visible=false;
+    }
+  }
+
   for(const s of ufoShots){
     if(!s.active)continue;
     s.mesh.position.addScaledVector(s.vel,dt);
@@ -469,10 +484,11 @@ function updateUFOs(dt,t){
       s.active=false;s.mesh.visible=false;lives--;invuln=1.25;combo=0;comboTimer=0;score=Math.max(0,score-30);
       burst(player.position,0xff3b78,30);beep("hit");if(settings.shake)shake=.4;toast("UFO HIT // -1 LIFE");updateHUD();
       if(lives<=0){endGame(false);return}
-    }else if(s.mesh.position.z>25||Math.abs(s.mesh.position.x)>50){s.active=false;s.mesh.visible=false}
+    }else if(s.mesh.position.z>25||Math.abs(s.mesh.position.x)>50){
+      s.active=false;s.mesh.visible=false;
+    }
   }
 }
-
 // ==========================================================================
 
 function createStars(){
