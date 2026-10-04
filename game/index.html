@@ -43,6 +43,7 @@ button.primary{background:linear-gradient(135deg,rgba(0,234,255,.18),rgba(255,57
 .knob{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px;border-radius:50%;border:1px solid rgba(0,234,255,.55);background:rgba(0,234,255,.08);box-shadow:0 0 25px rgba(0,234,255,.1)}
 .mobileActions{position:absolute;right:max(20px,env(safe-area-inset-right));bottom:max(28px,env(safe-area-inset-bottom));display:flex;gap:10px;pointer-events:auto}
 .mobileActions button{width:62px;height:62px;border-radius:50%;padding:0;font-size:18px;background:rgba(0,20,30,.55)}
+#fire{border-color:rgba(255,75,75,.5)!important;color:#ffdede!important}#fire.firing{background:rgba(255,45,45,.18)!important;box-shadow:0 0 24px rgba(255,45,45,.25)}
 @media(min-width:800px){#mobileControls{display:none}}
 @media(max-width:799px){#pauseBtn{display:none}.panel{padding:28px 22px}.small{font-size:9px}}
 
@@ -108,7 +109,7 @@ button.primary{background:linear-gradient(135deg,rgba(0,234,255,.18),rgba(255,57
     <div id="toast"></div><div id="collectGuide"></div><div id="scanText">COLLECTION RANGE</div>
     <div id="mobileControls">
       <div id="stick" class="stick"><div id="knob" class="knob"></div></div>
-      <div class="mobileActions"><button id="boost" aria-label="Ускорение"><span class="boostIcon">⚡</span><span class="boostLabel">BOOST</span><span class="boostSub">удерживай</span></button></div>
+      <div class="mobileActions"><button id="fire" aria-label="Огонь">✦</button><button id="boost" aria-label="Ускорение"><span class="boostIcon">⚡</span><span class="boostLabel">BOOST</span><span class="boostSub">удерживай</span></button></div>
     </div>
   </div>
 
@@ -168,6 +169,7 @@ button.primary{background:linear-gradient(135deg,rgba(0,234,255,.18),rgba(255,57
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/three@0.140.0/build/three.min.js'"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/loaders/RGBELoader.js"></script>
 <script>
 (() => {
 "use strict";
@@ -178,6 +180,11 @@ let levelBanner=null,levelBannerTitle=null,levelBannerSub=null;
 const crystals=[],asteroids=[],particles=[],stars=[];
 const keys={};
 let state="MENU",score=0,lives=3,collected=0,level=1,combo=0,comboTimer=0,invuln=0;
+let firing=false,fireCooldown=0;
+let envMap=null,rockMaps=null;
+const ufos=[],ufoShots=[],playerShots=[];
+let ufoShotCursor=0,playerShotCursor=0;
+const nitroParticles=[];let nitroTrail, nitroAccumulator=0;
 let sector=1,sectorGoal=10,sectorCollected=0;
 let boostEnergy=100,boostRegen=18,boosting=false;
 let activeBuffs={turbo:0,shield:0,magnet:0};
@@ -217,13 +224,20 @@ function initScene(){
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
   renderer.setSize(innerWidth,innerHeight);
   renderer.outputEncoding=THREE.sRGBEncoding;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.15;
+  renderer.physicallyCorrectLights=true;
   document.body.prepend(renderer.domElement);
 
   clock=new THREE.Clock();
 
   scene.add(new THREE.AmbientLight(0x557799,.7));
-  const sun=new THREE.DirectionalLight(0xbdeeff,1.4);
-  sun.position.set(4,10,5);scene.add(sun);
+  const sun=new THREE.DirectionalLight(0xffffff,2.0);
+  sun.position.set(10,16,8);sun.castShadow=true;
+  sun.shadow.mapSize.width=1024;sun.shadow.mapSize.height=1024;
+  sun.shadow.camera.near=.5;sun.shadow.camera.far=80;
+  scene.add(sun);
+  const hemi=new THREE.HemisphereLight(0x9bdcff,0x07101c,.85);scene.add(hemi);
   const cyanLight=new THREE.PointLight(0x00ddff,1.8,35);
   cyanLight.position.set(0,5,0);scene.add(cyanLight);
 
@@ -232,11 +246,234 @@ function initScene(){
   initPlayer();
   initCrystals();
   initAsteroids();
+  initNitroTrail();
+  initUFOSystem();
+  loadPBRAssets();
+  enhanceCrystalMaterials();
+  enhanceShipMaterials();
 
   addEventListener("resize",onResize);
-  addEventListener("keydown",e=>{keys[e.code]=true;if(e.code==="Escape"){if(state==="PLAYING")pauseGame();else if(state==="PAUSED")resumeGame()}});
-  addEventListener("keyup",e=>keys[e.code]=false);
+  addEventListener("keydown",e=>{keys[e.code]=true;if(e.code==="KeyF")firing=true;if(e.code==="Escape"){if(state==="PLAYING")pauseGame();else if(state==="PAUSED")resumeGame()}});
+  addEventListener("keyup",e=>{keys[e.code]=false;if(e.code==="KeyF")firing=false;});
 }
+
+
+// === PBR / HDRI ============================================================
+// Poly Haven provides CC0 HDRIs and physically based material maps.
+// The HDR is optional: if the CDN is unavailable the game keeps its fallback lights.
+function loadPBRAssets(){
+  try{
+    const pmrem=new THREE.PMREMGenerator(renderer);
+    pmrem.compileEquirectangularShader();
+    const hdrUrl="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/dikhololo_night_1k.hdr";
+    new THREE.RGBELoader().setDataType(THREE.UnsignedByteType).load(hdrUrl,tex=>{
+      envMap=pmrem.fromEquirectangular(tex).texture;
+      scene.environment=envMap;
+      tex.dispose();pmrem.dispose();
+      enhanceShipMaterials();enhanceCrystalMaterials();applyRockMaps();
+    },undefined,()=>pmrem.dispose());
+  }catch(e){console.warn("HDRI fallback",e)}
+  // 1K maps keep the game mobile-friendly while still adding real surface detail.
+  const tl=new THREE.TextureLoader();
+  const base="https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/";
+  const urls={
+    map:base+"rock_01_diff_1k.jpg",
+    normal:base+"rock_01_nor_gl_1k.jpg",
+    rough:base+"rock_01_rough_1k.jpg",
+    displacement:base+"rock_01_disp_1k.jpg"
+  };
+  const loaded={};let pending=Object.keys(urls).length;
+  Object.entries(urls).forEach(([key,url])=>tl.load(url,t=>{loaded[key]=t;if(--pending===0){rockMaps=loaded;applyRockMaps()}},undefined,()=>{pending--;if(pending===0&&loaded.map) {rockMaps=loaded;applyRockMaps()}}));
+}
+function applyRockMaps(){
+  if(!rockMaps)return;
+  asteroids.forEach(a=>a.traverse(o=>{
+    if(!o.isMesh||!o.material||!o.material.isMeshStandardMaterial)return;
+    o.material.map=rockMaps.map||null;
+    o.material.normalMap=rockMaps.normal||null;
+    o.material.roughnessMap=rockMaps.rough||null;
+    o.material.displacementMap=rockMaps.displacement||null;
+    o.material.displacementScale=.055;
+    o.material.needsUpdate=true;
+  }));
+}
+function enhanceShipMaterials(){
+  if(!player||!envMap)return;
+  player.traverse(o=>{
+    if(!o.isMesh||!o.material)return;
+    const old=o.material;
+    if(old.isMeshStandardMaterial){
+      o.material=new THREE.MeshStandardMaterial({
+        color:old.color,metalness:Math.max(.55,old.metalness),roughness:Math.min(.34,old.roughness),
+        emissive:old.emissive,emissiveIntensity:old.emissiveIntensity,
+        envMap:envMap,envMapIntensity:1.35
+      });
+    }
+  });
+}
+function enhanceCrystalMaterials(){
+  if(!crystals.length||!envMap)return;
+  crystals.forEach(g=>g.traverse(o=>{
+    if(!o.isMesh||!o.material||o.userData.crystalEnhanced)return;
+    const m=new THREE.MeshPhysicalMaterial({
+      color:0x9cecff,metalness:.08,roughness:.05,
+      transmission:.9,ior:2.333,thickness:1.5,
+      transparent:false,opacity:1,
+      emissive:0x2ccfff,emissiveIntensity:1.6,
+      envMap:envMap,envMapIntensity:1.4
+    });
+    o.material=m;o.userData.crystalEnhanced=true;
+  }));
+}
+
+// === NITRO TRAIL ===========================================================
+// World-space pooled particles. They are never children of the ship, so the
+// trail stays behind the vehicle instead of rotating with it.
+function initNitroTrail(){
+  const max=700,positions=new Float32Array(max*3),colors=new Float32Array(max*3),sizes=new Float32Array(max),alphas=new Float32Array(max);
+  for(let i=0;i<max;i++){sizes[i]=0;alphas[i]=0;}
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute("position",new THREE.BufferAttribute(positions,3));
+  geo.setAttribute("color",new THREE.BufferAttribute(colors,3));
+  geo.setAttribute("aSize",new THREE.BufferAttribute(sizes,1));
+  geo.setAttribute("aAlpha",new THREE.BufferAttribute(alphas,1));
+  const mat=new THREE.ShaderMaterial({
+    transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+    vertexColors:true,
+    vertexShader:"attribute float aSize;attribute float aAlpha;varying vec3 vColor;varying float vAlpha;void main(){vColor=color;vAlpha=aAlpha;vec4 mvPosition=modelViewMatrix*vec4(position,1.0);gl_PointSize=aSize*(300.0/-mvPosition.z);gl_Position=projectionMatrix*mvPosition;}",
+    fragmentShader:"varying vec3 vColor;varying float vAlpha;void main(){float d=length(gl_PointCoord-.5)*2.0;float glow=smoothstep(1.0,0.0,d);if(glow<.02)discard;gl_FragColor=vec4(vColor,glow*vAlpha);}"
+  });
+  nitroTrail=new THREE.Points(geo,mat);nitroTrail.frustumCulled=false;scene.add(nitroTrail);
+  for(let i=0;i<max;i++)nitroParticles.push({life:0,pos:new THREE.Vector3(),vel:new THREE.Vector3(),size:0,alpha:0,color:new THREE.Color()});
+}
+function spawnNitroParticle(){
+  if(!nitroTrail||!player)return;
+  let p=null;
+  for(let i=0;i<nitroParticles.length;i++){if(nitroParticles[i].life<=0){p=nitroParticles[i];break}}
+  if(!p)return;
+  const side=Math.random()<.5?-1:1;
+  const local=new THREE.Vector3(side*.53,-.18,1.68);
+  const world=player.localToWorld(local);
+  const backward=new THREE.Vector3(0,0,1).applyQuaternion(player.quaternion).normalize();
+  p.pos.copy(world);
+  p.vel.copy(backward).multiplyScalar(rand(5,11)).add(new THREE.Vector3(rand(-1.5,1.5),rand(-.8,.8),rand(-1.5,1.5)));
+  p.life=rand(.32,.58);p.size=rand(10,18);p.alpha=1;p.color.set(0xff2200);
+}
+function updateNitroTrail(dt){
+  if(!nitroTrail)return;
+  nitroAccumulator+=dt;
+  if(boosting){
+    while(nitroAccumulator>=.02){nitroAccumulator-=.02;for(let i=0;i<rand(3,6);i++)spawnNitroParticle();}
+  }else nitroAccumulator=Math.min(nitroAccumulator,.02);
+  const pos=nitroTrail.geometry.attributes.position.array, col=nitroTrail.geometry.attributes.color.array, sz=nitroTrail.geometry.attributes.aSize.array, al=nitroTrail.geometry.attributes.aAlpha.array;
+  for(let i=0;i<nitroParticles.length;i++){
+    const p=nitroParticles[i],k=i*3;
+    if(p.life>0){
+      p.life-=dt;p.pos.addScaledVector(p.vel,dt);p.vel.multiplyScalar(Math.pow(.12,dt));p.size*=Math.pow(.06,dt);
+      const t=clamp(p.life/.58,0,1);p.color.setRGB(.2+.8*t,.0,.0);
+      pos[k]=p.pos.x;pos[k+1]=p.pos.y;pos[k+2]=p.pos.z;col[k]=p.color.r;col[k+1]=p.color.g;col[k+2]=p.color.b;sz[i]=Math.max(0,p.size);al[i]=t;
+    }else{sz[i]=0;al[i]=0;}
+  }
+  nitroTrail.geometry.attributes.position.needsUpdate=true;nitroTrail.geometry.attributes.color.needsUpdate=true;nitroTrail.geometry.attributes.aSize.needsUpdate=true;nitroTrail.geometry.attributes.aAlpha.needsUpdate=true;
+}
+
+// === UFO / WEAPON SYSTEM ===================================================
+function initUFOSystem(){
+  for(let i=0;i<3;i++){const u=createUFO(false);u.visible=false;ufos.push(u);}
+  const boss=createUFO(true);boss.visible=false;ufos.push(boss);
+  for(let i=0;i<48;i++)ufoShots.push({mesh:createProjectile(0xff3344,.15),active:false,vel:new THREE.Vector3()});
+  for(let i=0;i<36;i++)playerShots.push({mesh:createProjectile(0x8ce9ff,.08),active:false,vel:new THREE.Vector3()});
+  ufoShots.forEach(s=>scene.add(s.mesh));playerShots.forEach(s=>scene.add(s.mesh));
+}
+function createProjectile(color,r){
+  const m=new THREE.Mesh(new THREE.SphereGeometry(r,10,8),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.95}));
+  m.visible=false;return m;
+}
+function createUFO(boss){
+  const g=new THREE.Group();
+  const metal=new THREE.MeshPhysicalMaterial({color:boss?0x5d406e:0x263b46,metalness:.88,roughness:.18,envMapIntensity:1.4,emissive:boss?0x4b124f:0x092c24,emissiveIntensity:boss?1.8:1.1});
+  const domeMat=new THREE.MeshPhysicalMaterial({color:boss?0xa66cff:0x54ffbf,metalness:.25,roughness:.12,transmission:.28,ior:1.45,emissive:boss?0x5d1dff:0x00ff9d,emissiveIntensity:2.5});
+  const disk=new THREE.Mesh(new THREE.CylinderGeometry(boss?2.4:1.35,boss?2.8:1.65,boss?.55:.38,32),metal);
+  const dome=new THREE.Mesh(new THREE.SphereGeometry(boss?1.45:.78,24,12,0,Math.PI*2,0,Math.PI*.55),domeMat);
+  dome.position.y=boss?.32:.2;g.add(disk,dome);
+  const ringMat=new THREE.MeshBasicMaterial({color:boss?0xd85cff:0x4dffca});
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(boss?2.25:1.2,.045,8,40),ringMat);ring.rotation.x=Math.PI/2;ring.position.y=-.12;g.add(ring);
+  const dots=[];
+  for(let i=0;i<(boss?3:3);i++){const d=new THREE.Mesh(new THREE.SphereGeometry(boss?.12:.08,8,6),new THREE.MeshBasicMaterial({color:0xff4055}));d.position.set((i-1)*(boss?.42:.22),boss?.72:.42,0);g.add(d);dots.push(d);}
+  const hpBar=new THREE.Group();hpBar.position.y=boss?2.8:1.65;
+  for(let i=0;i<3;i++){const b=new THREE.Mesh(new THREE.BoxGeometry(.22,.05,.05),new THREE.MeshBasicMaterial({color:0xff3b68}));b.position.x=(i-1)*.28;hpBar.add(b);}
+  g.add(hpBar);
+  g.userData={boss,hp:boss?3:1,baseY:0,phase:Math.random()*6.28,fireTimer:rand(1.2,2.8),hpBar,dots};
+  scene.add(g);return g;
+}
+function spawnUFOsForSector(){
+  ufos.forEach(u=>u.visible=false);
+  if(sector<2)return;
+  const count=sector===2?1:sector===3?1:sector===4?2:3;
+  for(let i=0;i<count;i++)spawnUFO(ufos[i],false);
+  if(sector>=5)spawnUFO(ufos[3],true);
+}
+function spawnUFO(u,boss){
+  u.visible=true;u.userData.boss=boss;u.userData.hp=boss?3:1;u.userData.phase=Math.random()*6.28;
+  u.userData.fireTimer=rand(1.1,2.2);u.position.set(rand(-15,15),rand(3,6),rand(-40,-20));
+  u.rotation.set(0,rand(0,6.28),0);updateUFOHealth(u);
+}
+function updateUFOHealth(u){
+  const hp=u.userData.hp;
+  u.userData.hpBar.children.forEach((b,i)=>b.material.color.set(i<hp?(u.userData.boss?0xd85cff:0xff4055):0x202832));
+}
+function fireUFO(u){
+  const maxSpeed=sector>=5?12:10;
+  const count=u.userData.boss?3:1;
+  for(let n=0;n<count;n++){
+    const s=ufoShots[ufoShotCursor++%ufoShots.length];if(s.active)continue;
+    s.active=true;s.mesh.visible=true;s.mesh.position.copy(u.position);
+    const dir=player.position.clone().sub(u.position).normalize();
+    if(count>1)dir.x+=(n-1)*.16;
+    dir.normalize();s.vel.copy(dir).multiplyScalar(rand(maxSpeed*.85,maxSpeed*1.05));
+  }
+  beep("hit");
+}
+function firePlayerShot(){
+  const s=playerShots[playerShotCursor++%playerShots.length];if(s.active)return;
+  s.active=true;s.mesh.visible=true;s.mesh.position.copy(player.position);
+  const dir=new THREE.Vector3(0,0,-1).applyQuaternion(player.quaternion).normalize();s.vel.copy(dir).multiplyScalar(28);
+}
+function hitUFO(u){
+  u.userData.hp--;score+=u.userData.boss?100:50;burst(u.position,u.userData.boss?0xd85cff:0xff4055,u.userData.boss?28:18);updateUFOHealth(u);
+  if(u.userData.hp<=0){score+=500;u.visible=false;beep("level");toast("HOSTILE DESTROYED // +500");}
+}
+function updateUFOs(dt,t){
+  ufos.forEach(u=>{
+    if(!u.visible)return;
+    u.position.x+=Math.sin(t*.65+u.userData.phase)*dt*(u.userData.boss?2.1:1.4);
+    u.position.y=u.userData.baseY+4.5+Math.sin(t*1.1+u.userData.phase)*.75;
+    u.position.z+=dt*(u.userData.boss?.35:.65);
+    u.rotation.z=Math.sin(t*1.7+u.userData.phase)*.08;u.rotation.y+=dt*(u.userData.boss?.35:.55);
+    u.userData.fireTimer-=dt;
+    if(u.userData.fireTimer<=0){
+      fireUFO(u);
+      u.userData.fireTimer=sector>=5?2:sector>=4?2.5:rand(2.3,3.0);
+    }
+    for(const s of playerShots){
+      if(!s.active)continue;
+      s.mesh.position.addScaledVector(s.vel,dt);
+      if(s.mesh.position.distanceTo(u.position)<(u.userData.boss?2.5:1.55)){s.active=false;s.mesh.visible=false;hitUFO(u);break}
+      if(s.mesh.position.z<-180){s.active=false;s.mesh.visible=false}
+    }
+  });
+  for(const s of ufoShots){
+    if(!s.active)continue;
+    s.mesh.position.addScaledVector(s.vel,dt);
+    if(invuln<=0&&s.mesh.position.distanceTo(player.position)<1.2){
+      s.active=false;s.mesh.visible=false;lives--;invuln=1.25;combo=0;comboTimer=0;score=Math.max(0,score-30);
+      burst(player.position,0xff3b78,30);beep("hit");if(settings.shake)shake=.4;toast("UFO HIT // -1 LIFE");updateHUD();
+      if(lives<=0){endGame(false);return}
+    }else if(s.mesh.position.z>25||Math.abs(s.mesh.position.x)>50){s.active=false;s.mesh.visible=false}
+  }
+}
+
+// ==========================================================================
 
 function createStars(){
   const geo=new THREE.BufferGeometry(),pos=[];
@@ -525,6 +762,14 @@ function beep(type){
   asteroidSpeed=4.5+sector*.65;
   boostRegen=Math.max(9,18-sector*1.4);
   initBuffSpawns();
+  // Automatic sector rewards from the game design prompt.
+  if(sector===2)activeBuffs.shield=10;
+  if(sector===3)activeBuffs.turbo=5;
+  if(sector===4)activeBuffs.magnet=8;
+  if(sector>=5){activeBuffs.turbo=6;activeBuffs.shield=6;activeBuffs.magnet=6;}
+  if(sector>=2){beep("level");toast("SECTOR "+sector+" // SYSTEM BUFF ONLINE");}
+  spawnUFOsForSector();
+  updateHUD();
 }
 function showSectorBanner(){
   const banner=document.getElementById("levelBanner");
@@ -589,14 +834,14 @@ function startGame(){
   score=0;lives=3;collected=0;level=1;combo=0;comboTimer=0;invuln=0;
   sector=1;sectorCollected=0;boostEnergy=100;boosting=false;activeBuffs={turbo:0,shield:0,magnet:0};
   player.position.set(0,0,6);player.rotation.set(0,0,0);player.visible=true;
-  crystals.forEach(respawnCrystal);asteroids.forEach(respawnAsteroid);configureSector();
+  crystals.forEach(respawnCrystal);asteroids.forEach(respawnAsteroid);ufoShots.forEach(s=>{s.active=false;s.mesh.visible=false});playerShots.forEach(s=>{s.active=false;s.mesh.visible=false});configureSector();
   showOnly("hud");$("mobileControls").classList.remove("hidden");updateHUD();clock.start();
 }
 function pauseGame(){if(state!=="PLAYING")return;state="PAUSED";$("pauseScreen").classList.remove("hidden")}
 function resumeGame(){if(state!=="PAUSED")return;state="PLAYING";$("pauseScreen").classList.add("hidden");clock.getDelta()}
 function restartGame(){ $("pauseScreen").classList.add("hidden");startGame() }
 function endGame(win=false){
-  state=win?"VICTORY":"GAME_OVER";$("hud").classList.add("hidden");
+  state=win?"VICTORY":"GAME_OVER";firing=false;boost=false;boosting=false;ufos.forEach(u=>u.visible=false);ufoShots.forEach(s=>{s.active=false;s.mesh.visible=false});playerShots.forEach(s=>{s.active=false;s.mesh.visible=false});$("hud").classList.add("hidden");
   const best=Math.max(score,+localStorage.getItem(BEST_KEY)||0);localStorage.setItem(BEST_KEY,best);
   if(win){$("winScore").textContent=score;$("winBest").textContent=best;$("victory").classList.remove("hidden");beep("win")}
   else{$("finalScore").textContent=score;$("finalBest").textContent=best;$("finalCrystals").textContent=collected;$("gameOver").classList.remove("hidden");beep("over")}
@@ -617,6 +862,7 @@ function updatePlayer(dt){
   if(keys.KeyA||keys.ArrowLeft)x-=1;if(keys.KeyD||keys.ArrowRight)x+=1;
   if(keys.KeyW||keys.ArrowUp)z-=1;if(keys.KeyS||keys.ArrowDown)z+=1;
   if(touchVec.x||touchVec.y){x+=touchVec.x;z+=touchVec.y}
+  if(firing){fireCooldown-=dt;if(fireCooldown<=0){firePlayerShot();fireCooldown=.16}}else fireCooldown=0;
   const wantsBoost=keys.Space||boost;
   boosting=wantsBoost&&boostEnergy>0.5;
   if(boosting)boostEnergy=Math.max(0,boostEnergy-dt*42);else boostEnergy=Math.min(100,boostEnergy+dt*boostRegen);
@@ -729,7 +975,7 @@ function updateLoop(){
   const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
   try{
     if(state==="PLAYING"){
-      updatePlayer(dt);updateCamera(dt);updateCrystals(dt,t);updateBuffs(dt,t);
+      updatePlayer(dt);updateCamera(dt);updateCrystals(dt,t);updateBuffs(dt,t);updateUFOs(dt,t);updateNitroTrail(dt);
       player.children.forEach((o,i)=>{
         if(o.material&&o.material.emissiveIntensity>2)
           o.material.emissiveIntensity=3.2+Math.sin(t*10+i)*.7;
@@ -766,6 +1012,10 @@ function setupTouch(){
   function resetStick(){stickActive=false;touchVec.x=touchVec.y=0;knob.style.transform="translate(0,0)"}
   $("boost").addEventListener("pointerdown",e=>{e.preventDefault();boost=true;ensureAudio()});
   $("boost").addEventListener("pointerup",()=>boost=false);$("boost").addEventListener("pointercancel",()=>boost=false);
+  const fireBtn=$("fire");
+  fireBtn.addEventListener("pointerdown",e=>{e.preventDefault();firing=true;fireBtn.classList.add("firing");ensureAudio()});
+  fireBtn.addEventListener("pointerup",()=>{firing=false;fireBtn.classList.remove("firing")});
+  fireBtn.addEventListener("pointercancel",()=>{firing=false;fireBtn.classList.remove("firing")});
 }
 
 function syncSettingsUI(){
