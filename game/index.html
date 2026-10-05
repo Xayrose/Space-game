@@ -977,13 +977,6 @@ function updatePlayer(dt){
   if(boostButton){boostButton.classList.toggle("boosting",boosting);boostButton.classList.toggle("empty",boostEnergy<5)}
 }
 function updateShipFX(t,dt){
-  // Плавное вращение НЛО и лёгкий наклон во время полёта.
-  if(playerModel){
-    playerModel.rotation.y += dt * 0.42;
-    const targetTilt = Math.sin(t * 1.15) * 0.055 + steerX * 0.035;
-    playerModel.rotation.z = THREE.MathUtils.lerp(playerModel.rotation.z, targetTilt, Math.min(1, dt * 3.5));
-    playerModel.rotation.x = THREE.MathUtils.lerp(playerModel.rotation.x, Math.sin(t * 0.85) * 0.028, Math.min(1, dt * 2.8));
-  }
   const fast=boosting||activeBuffs.turbo>0;
   for(const f of shipFlames){
     const pulse=.9+Math.sin(t*40+f.position.x*9)*.1;
